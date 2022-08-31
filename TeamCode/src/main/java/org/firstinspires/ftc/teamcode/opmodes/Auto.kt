@@ -13,5 +13,9 @@ class Auto: LinearOpMode() {
     waitForStart()
 
     robot.set_powers(0.5)
+
+    sleep(1000)
+
+    robot.set_powers(.0)
   }
 }
