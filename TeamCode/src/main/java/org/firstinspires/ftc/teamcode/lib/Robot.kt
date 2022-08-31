@@ -14,11 +14,11 @@ import org.firstinspires.ftc.teamcode.lib.utils.Utils
 import kotlin.math.*
 
 class Robot(val op_mode: OpMode) {
-    private lateinit var left_front: Motor
-    private lateinit var left_rear: Motor
-    private lateinit var right_front: Motor
-    private lateinit var right_rear: Motor
-    private lateinit var imu: BNO055IMU
+    var left_front: Motor
+    var left_rear: Motor
+    var right_front: Motor
+    var right_rear: Motor
+    var imu: BNO055IMU
 
     private var angle: Double = 0.0
     private var last_angle: Orientation = Orientation()
@@ -125,6 +125,13 @@ class Robot(val op_mode: OpMode) {
         right_rear.power = pow
     }
 
+    fun set_powers(pow: Int) {
+        left_front.power = pow.toDouble()
+        left_rear.power = pow.toDouble()
+        right_front.power = pow.toDouble()
+        right_rear.power = pow.toDouble()
+    }
+    
     fun move(cm: Double, power: Double = DEFAULT_MOTOR_POWER) {
         set_mode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
 
