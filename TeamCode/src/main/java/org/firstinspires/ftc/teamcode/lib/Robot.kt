@@ -14,13 +14,13 @@ import org.firstinspires.ftc.teamcode.lib.utils.Utils
 import kotlin.math.*
 
 class Robot(val op_mode: OpMode) {
-    var left_front: Motor
-    var left_rear: Motor
-    var right_front: Motor
-    var right_rear: Motor
+    var left_front = Motor(op_mode.hardwareMap!!.dcMotor!!.get("left_front"))
+    var left_rear = Motor(op_mode.hardwareMap!!.dcMotor!!.get("left_rear"))
+    var right_front = Motor(op_mode.hardwareMap!!.dcMotor!!.get("right_front"))
+    var right_rear = Motor(op_mode.hardwareMap!!.dcMotor!!.get("right_rear"))
     var imu: BNO055IMU
 
-    private var angle: Double = 0.0
+    private var angle: Double = .0
     private var last_angle: Orientation = Orientation()
 
     //region:Config
@@ -38,10 +38,14 @@ class Robot(val op_mode: OpMode) {
     //endregion
 
     init {
-        left_front = Motor(op_mode.hardwareMap.dcMotor.get("left_front"))
-        left_rear = Motor(op_mode.hardwareMap.dcMotor.get("left_rear"))
-        right_front = Motor(op_mode.hardwareMap.dcMotor.get("right_front"))
-        right_rear = Motor(op_mode.hardwareMap.dcMotor.get("right_read"))
+        var hw = op_mode.hardwareMap
+        if (hw != null) {
+
+        }
+        right_rear = Motor(hw!!.get(DcMotor::class.java, "right_rear"))
+        right_front = Motor(hw.get(DcMotor::class.java, "right_front"))
+        left_rear = Motor(hw.get(DcMotor::class.java, "left_rear"))
+        left_front = Motor(hw.get(DcMotor::class.java, "left_front"))
 
         right_front.direction = DcMotorSimple.Direction.REVERSE
         right_rear.direction = DcMotorSimple.Direction.REVERSE
@@ -77,10 +81,10 @@ class Robot(val op_mode: OpMode) {
     }
 
     fun is_busy(): Boolean {
-        val busy = left_front.isBusy()  &&
-                   left_rear.isBusy()   &&
-                   right_front.isBusy() &&
-                   right_rear.isBusy()
+        val busy = left_front.isBusy &&
+                   left_rear.isBusy &&
+                   right_front.isBusy &&
+                   right_rear.isBusy
 
         val pows = (abs(left_front.power)  +
                     abs(left_rear.power)   +
