@@ -38,15 +38,6 @@ class Robot(val op_mode: OpMode) {
     //endregion
 
     init {
-        var hw = op_mode.hardwareMap
-        if (hw != null) {
-
-        }
-        right_rear = Motor(hw!!.get(DcMotor::class.java, "right_rear"))
-        right_front = Motor(hw.get(DcMotor::class.java, "right_front"))
-        left_rear = Motor(hw.get(DcMotor::class.java, "left_rear"))
-        left_front = Motor(hw.get(DcMotor::class.java, "left_front"))
-
         right_front.direction = DcMotorSimple.Direction.REVERSE
         right_rear.direction = DcMotorSimple.Direction.REVERSE
 
