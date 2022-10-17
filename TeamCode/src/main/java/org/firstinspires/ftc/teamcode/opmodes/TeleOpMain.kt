@@ -1,37 +1,32 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
+import android.graphics.Color
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.lib.Robot
+import org.firstinspires.ftc.teamcode.lib.recognition.ColorRecognition
+import org.firstinspires.ftc.teamcode.lib.recognition.OpenCV
 import org.firstinspires.ftc.teamcode.lib.recognition.Scanner
 
 @TeleOp(name = "TeleOp Main", group = "TeleOp")
 class TeleOpMain: OpMode() {
-    lateinit var robot: Robot
-    lateinit var scanner: Scanner
+    //private lateinit var robot: Robot
+    private lateinit var open_cv: OpenCV
 
     override fun init() {
-        robot = Robot(this)
-        scanner = Scanner(this)
-
-        var res = scanner.scan_aztek()
-        if (res != null) {
-            while (!res.isComplete) {}
-            for (b in res.result) {
-                this.telemetry.log().add("barcode: %s", b.rawValue)
-            }
-        }
+        //robot = Robot(this)
+        open_cv = OpenCV(this)
     }
 
     override fun init_loop() {
-        // initialize loop
     }
 
     override fun start() {
+        open_cv.start()
     }
 
     override fun loop() {
-        var k = .5;
+        val k = .5
         /*
         scanner.image.let {
             if (it != null) {
@@ -41,15 +36,18 @@ class TeleOpMain: OpMode() {
         }
         */
 
-        robot.drive(
-            gamepad1.left_stick_x * 1.1,
-            (-gamepad1.left_stick_y).toDouble(),
-            k * (gamepad1.right_trigger - gamepad1.left_trigger),
-        )
-        telemetry.update()
+        //robot.drive(
+        //    gamepad1.left_stick_x * 1.1,
+        //    (-gamepad1.left_stick_y).toDouble(),
+        //    k * (gamepad1.right_trigger - gamepad1.left_trigger),
+        //)
+        //telemetry.update()
+        telemetry.log().add("Data: ${open_cv.result}")
+
     }
 
     override fun stop() {
-        robot.set_powers(.0)
+        open_cv.stop()
+        //robot.set_powers(.0)
     }
 }

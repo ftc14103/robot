@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.lib.recognition
 
 import android.graphics.Bitmap
+import com.google.android.gms.tasks.RuntimeExecutionException
 import com.google.android.gms.tasks.Task
 import com.google.android.odml.image.BitmapMlImageBuilder
 import com.google.android.odml.image.MlImage
+import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
@@ -21,24 +23,10 @@ import java.util.concurrent.BlockingQueue
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions as BarcodeScannerOptions
 
 class Scanner(
-  private val op_mode: OpMode
+  op_mode: OpMode
 ) {
   private var vuforia: VuforiaLocalizer
   private var webcam: WebcamName = op_mode.hardwareMap.get(WebcamName::class.java, "Webcam 1")
-  var image: Image? = null
-    get() {
-      var frame = try {
-        vuforia.frameQueue.take()
-      } catch (e: Throwable) {
-        null
-      }
-
-      if (frame != null) {
-        return frame.getImage(0)
-      }
-
-      return null
-    }
 
   fun get_bitmap(): Bitmap? {
     var frame = try {
@@ -73,15 +61,19 @@ class Scanner(
   }
 
   fun scan_aztek(): Task<MutableList<Barcode>>? {
-    val options = BarcodeScannerOptions.Builder()
-      .build()
-
     var img = this.get_bitmap()
     if (img != null) {
-      val ml_image = BitmapMlImageBuilder(img).build()
+      return try {
+        var client = BarcodeScanning.getClient()
 
-      val scanner = BarcodeScanning.getClient(options)
-      return scanner.process(ml_image)
+        client.process(
+          InputImage.fromBitmap(img, 0)
+        )
+          .addOnFailureListener  { }
+          .addOnCompleteListener { client.close() }
+      } catch(e: Throwable) {
+        null
+      }
     }
 
     return null
