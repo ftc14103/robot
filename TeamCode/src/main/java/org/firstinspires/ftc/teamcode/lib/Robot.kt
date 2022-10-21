@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
@@ -14,10 +15,46 @@ import org.firstinspires.ftc.teamcode.lib.utils.Utils
 import kotlin.math.*
 
 class Robot(val op_mode: OpMode) {
+    // Motors
     var left_front = Motor(op_mode.hardwareMap!!.dcMotor!!.get("left_front"))
     var left_rear = Motor(op_mode.hardwareMap!!.dcMotor!!.get("left_rear"))
     var right_front = Motor(op_mode.hardwareMap!!.dcMotor!!.get("right_front"))
     var right_rear = Motor(op_mode.hardwareMap!!.dcMotor!!.get("right_rear"))
+
+    // Servos
+    var servo_middle = op_mode.hardwareMap!!.servo!!.get("middle")
+    var servo_top = op_mode.hardwareMap!!.servo!!.get("top")
+    var servo_take = op_mode.hardwareMap!!.servo!!.get("take")
+
+    var middle: Double
+        set(value) {
+            if (value < 1.0 && value > 0.0) servo_middle.position = value
+        }
+        get() = servo_middle.position
+
+    var top: Double
+        set(value) {
+            if (value < 1.0 && value > 0.0) servo_top.position = value
+        }
+        get() = servo_top.position
+
+    var take: Double
+        set(value) {
+            if (value < 1.0 && value > 0.0) servo_take.position = value
+        }
+        get() = servo_take.position
+
+    var take_state = false
+    fun take_something() {
+        if (take_state) {
+            take_state = false
+            take = .7
+        } else {
+            take_state = true
+            take = .0
+        }
+    }
+
     var imu: BNO055IMU
 
     private var angle: Double = .0
@@ -40,6 +77,9 @@ class Robot(val op_mode: OpMode) {
     init {
         right_front.direction = DcMotorSimple.Direction.REVERSE
         right_rear.direction = DcMotorSimple.Direction.REVERSE
+        servo_middle.direction = Servo.Direction.REVERSE
+        servo_top.direction = Servo.Direction.REVERSE
+        servo_take.direction = Servo.Direction.REVERSE
 
         imu = op_mode.hardwareMap.get(BNO055IMU::class.java, "imu")
         var params = BNO055IMU.Parameters()
@@ -126,7 +166,7 @@ class Robot(val op_mode: OpMode) {
         right_front.power = pow.toDouble()
         right_rear.power = pow.toDouble()
     }
-    
+
     fun move(cm: Double, power: Double = DEFAULT_MOTOR_POWER) {
         set_mode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
 

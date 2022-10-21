@@ -10,44 +10,42 @@ import org.firstinspires.ftc.teamcode.lib.recognition.Scanner
 
 @TeleOp(name = "TeleOp Main", group = "TeleOp")
 class TeleOpMain: OpMode() {
-    //private lateinit var robot: Robot
+    private lateinit var robot: Robot
     private lateinit var open_cv: OpenCV
 
     override fun init() {
-        //robot = Robot(this)
-        open_cv = OpenCV(this)
+        robot = Robot(this)
+        //open_cv = OpenCV(this)
     }
 
     override fun init_loop() {
+        //open_cv.start()
+        //telemetry.log().add("QR: ${open_cv.result}")
     }
 
     override fun start() {
-        open_cv.start()
+        //open_cv.stop()
     }
 
+    var a_state: Boolean = false
+
     override fun loop() {
-        val k = .5
-        /*
-        scanner.image.let {
-            if (it != null) {
-                telemetry.log().add("PicType = %d %d x %d", it.format, it.width, it.height)
-                telemetry.log().add("Bytes = %d", it.pixels.remaining())
-            }
-        }
-        */
+        val k = 1.0
 
-        //robot.drive(
-        //    gamepad1.left_stick_x * 1.1,
-        //    (-gamepad1.left_stick_y).toDouble(),
-        //    k * (gamepad1.right_trigger - gamepad1.left_trigger),
-        //)
+
+
+        robot.drive(
+            gamepad1.left_stick_x * -1.1,
+            (-gamepad1.left_stick_y).toDouble(),
+            k * (gamepad1.right_trigger - gamepad1.left_trigger),
+        )
+
+
         //telemetry.update()
-        telemetry.log().add("Data: ${open_cv.result}")
-
+        //telemetry.log().add("Data: ${open_cv.result}")
     }
 
     override fun stop() {
-        open_cv.stop()
-        //robot.set_powers(.0)
+        robot.set_powers(.0)
     }
 }

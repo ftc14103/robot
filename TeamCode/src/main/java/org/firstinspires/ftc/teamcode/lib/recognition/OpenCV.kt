@@ -8,9 +8,9 @@ import org.opencv.objdetect.QRCodeDetector
 import org.openftc.easyopencv.*
 
 class OpenCV(
-  op_mode: OpMode
+  val op_mode: OpMode
 ) {
-  val webcam: OpenCvWebcam = OpenCvCameraFactory.getInstance().createWebcam(
+  val webcam: OpenCvCamera = OpenCvCameraFactory.getInstance().createWebcam(
     op_mode.hardwareMap.get(WebcamName::class.java, "Webcam 1"),
     op_mode.hardwareMap.appContext.resources.getIdentifier(
       "cameraMonitorViewId",
@@ -20,17 +20,15 @@ class OpenCV(
   )
   val pipeline = Pipeline(webcam)
 
-  val result: Pipeline.Posittion
+  val result: Pipeline.Position
     get() = pipeline.get_result()
 
   fun start() {
     webcam.setPipeline(pipeline)
-
-    webcam.setMillisecondsPermissionTimeout(2500)
     webcam.openCameraDeviceAsync(object : OpenCvCamera.AsyncCameraOpenListener {
       override fun onOpened() {
         // 1280x720
-        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
+        webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT)
       }
 
       override fun onError(errorCode: Int) {
@@ -41,26 +39,27 @@ class OpenCV(
 
   fun stop() {
     webcam.stopStreaming()
-    webcam.closeCameraDevice()
   }
 
   class Pipeline(
-    private val webcam: OpenCvWebcam
+    private val webcam: OpenCvCamera
   ): OpenCvPipeline() {
     var paused = false
     var data: String? = null
 
-    enum class Posittion {
+    enum class Position {
       LEFT, CENTER, RIGHT
     }
 
-    fun get_result(): Posittion {
+    fun get_result(): Position {
       return when (data) {
-        "https://t.me/sputnik14103" -> Posittion.LEFT
-        "https://sputnik.lab244.ru/" -> Posittion.CENTER
-        "RIGHT" -> Posittion.RIGHT
-        else -> Posittion.CENTER
+        "https://t.me/sputnik14103" -> Position.LEFT
+        "https://sputnik.lab244.ru/" -> Position.CENTER
+        "https://rr.noordstar.me/79535689" -> Position.RIGHT
+        else -> Position.CENTER
       }
+
+      //return data.orEmpty()
     }
 
     override fun processFrame(input: Mat): Mat {
