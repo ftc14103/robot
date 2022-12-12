@@ -18,9 +18,10 @@ apply plugin: 'kotlin-android'
 
 android {
 
+
     packagingOptions {
         jniLibs {
-            pickFirsts += ['**/*.so']
+            pickFirsts += ['**/*.so', '**/*.so']
         }
     }
     namespace = 'org.firstinspires.ftc.teamcode'

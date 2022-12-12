@@ -2,84 +2,68 @@ package org.firstinspires.ftc.teamcode.lib
 
 import android.os.SystemClock.sleep
 import com.qualcomm.hardware.bosch.BNO055IMU
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.hardware.DigitalChannel
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.lib.hardware.Motor
+import org.firstinspires.ftc.teamcode.lib.hardware.Servo
 import org.firstinspires.ftc.teamcode.lib.utils.Utils
 import kotlin.math.*
 
-class Robot(val op_mode: OpMode) {
+class Robot(val op_mode: LinearOpMode) {
     // Motors
     var left_front = Motor(op_mode.hardwareMap!!.dcMotor!!.get("left_front"))
     var left_rear = Motor(op_mode.hardwareMap!!.dcMotor!!.get("left_rear"))
     var right_front = Motor(op_mode.hardwareMap!!.dcMotor!!.get("right_front"))
     var right_rear = Motor(op_mode.hardwareMap!!.dcMotor!!.get("right_rear"))
+    var up = Motor(op_mode.hardwareMap!!.dcMotor!!.get("motor_up"))
+    var down = Motor(op_mode.hardwareMap!!.dcMotor!!.get("motor_down"))
 
     // Servos
-    var servo_middle = op_mode.hardwareMap!!.servo!!.get("middle")
-    var servo_top = op_mode.hardwareMap!!.servo!!.get("top")
-    var servo_take = op_mode.hardwareMap!!.servo!!.get("take")
-
-    var middle: Double
-        set(value) {
-            if (value < 1.0 && value > 0.0) servo_middle.position = value
-        }
-        get() = servo_middle.position
-
-    var top: Double
-        set(value) {
-            if (value < 1.0 && value > 0.0) servo_top.position = value
-        }
-        get() = servo_top.position
-
+    var servo_take = Servo(op_mode.hardwareMap!!.servo!!.get("take"))
+    // 0.08, 0.71
     var take: Double
-        set(value) {
-            if (value < 1.0 && value > 0.0) servo_take.position = value
-        }
         get() = servo_take.position
-
-    var take_state = false
-    fun take_something() {
-        if (take_state) {
-            take_state = false
-            take = .7
-        } else {
-            take_state = true
-            take = .0
+        set(value) {
+            if (value in 0.0..1.0) servo_take.position = value
         }
-    }
 
     var imu: BNO055IMU
 
     private var angle: Double = .0
     private var last_angle: Orientation = Orientation()
 
-    //region:Config
-    val DEFAULT_MOTOR_POWER = .5
-    val TICK_PER_REV = 1120
-    val MAX_RPM = 160
-    val WHEEL_RADIUS = .2
-    val GEAR_RATIO = 2.0
-    val TRACK_WIDTH = 10.87
+    var button: DigitalChannel = op_mode.hardwareMap!!.digitalChannel!!.get("button")
 
-    val MAX_VEL = 10.658975074679656
-    val MAX_ACCEL = 14.241886696273728
-    val MAX_ANG_VEL = Math.toRadians(75.06899724011039)
-    val MAX_ANG_ACCEL = Math.toRadians(75.06899724011039)
+    var lift_state: Boolean = false
+        get() = button.state
+
+    //region:Config
+    companion object {
+        val DEFAULT_MOTOR_POWER = .5
+        val TICK_PER_REV = 1120
+        val MAX_RPM = 160
+        val WHEEL_RADIUS = .2
+        val GEAR_RATIO = 2.0
+        val TRACK_WIDTH = 10.87
+
+        val MAX_VEL = 10.65
+        val MAX_ACCEL = 14.24
+        val MAX_ANG_VEL = Math.toRadians(75.06899724011039)
+        val MAX_ANG_ACCEL = Math.toRadians(75.06899724011039)
+    }
     //endregion
 
     init {
         right_front.direction = DcMotorSimple.Direction.REVERSE
         right_rear.direction = DcMotorSimple.Direction.REVERSE
-        servo_middle.direction = Servo.Direction.REVERSE
-        servo_top.direction = Servo.Direction.REVERSE
-        servo_take.direction = Servo.Direction.REVERSE
+//        middle.direction = DcMotorSimple.Direction.REVERSE
 
         imu = op_mode.hardwareMap.get(BNO055IMU::class.java, "imu")
         var params = BNO055IMU.Parameters()
@@ -132,11 +116,11 @@ class Robot(val op_mode: OpMode) {
         right_rear.targetPosition = (target * sign(pows[3])).toInt()
     }
 
-    fun set_target_position(target: DoubleArray) {
-        left_front.power = target[0]
-        left_rear.power = target[1]
-        right_front.power = target[2]
-        right_rear.power = target[3]
+    fun set_target_position(target: IntArray) {
+        left_front.targetPosition = target[0]
+        left_rear.targetPosition = target[1]
+        right_front.targetPosition = target[2]
+        right_rear.targetPosition = target[3]
     }
 
     fun set_target_position(target: Double) {
@@ -167,6 +151,7 @@ class Robot(val op_mode: OpMode) {
         right_rear.power = pow.toDouble()
     }
 
+
     fun move(cm: Double, power: Double = DEFAULT_MOTOR_POWER) {
         set_mode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
 
@@ -175,21 +160,43 @@ class Robot(val op_mode: OpMode) {
         set_powers(doubleArrayOf(-power, -power, power, power))
         set_mode(DcMotor.RunMode.RUN_TO_POSITION)
 
-        while (is_busy()) {}
+        while (is_busy() && op_mode.opModeIsActive()) {}
 
         set_powers(0.0)
         set_mode(DcMotor.RunMode.RUN_USING_ENCODER)
+    }
+
+    // max = 5300 tick
+    // 5500
+    // 4200
+    // 2700
+    // 600
+    fun expand(tick: Double, power: Double = DEFAULT_MOTOR_POWER) {
+        if (tick > 5300 || up.currentPosition > 5300) {
+            return
+        }
+
+        up.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+
+        up.targetPosition = (tick + sign(power)).toInt()
+        up.power = power
+        up.mode = DcMotor.RunMode.RUN_TO_POSITION
+
+        while (up.isBusy && up.power > .05 && op_mode.opModeIsActive()) {}
+
+        up.power = 0.0
+        up.mode = DcMotor.RunMode.RUN_USING_ENCODER
     }
 
     fun strafe(cm: Double, power: Double = DEFAULT_MOTOR_POWER) {
         set_mode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
 
         val target = -cm / (WHEEL_RADIUS * sqrt(2.0)) * TICK_PER_REV
-        set_target_position(doubleArrayOf(target, -target, target, -target))
+        //set_target_position(doubleArrayOf(target, -target, target, -target))
         set_powers(doubleArrayOf(power, power, -power, -power))
         set_mode(DcMotor.RunMode.RUN_TO_POSITION)
 
-        while (is_busy()) {}
+        while (is_busy() && op_mode.opModeIsActive()) {}
 
         set_powers(0.0)
         set_mode(DcMotor.RunMode.RUN_USING_ENCODER)
@@ -219,20 +226,18 @@ class Robot(val op_mode: OpMode) {
     fun rotate(degrees: Double, power: Double = DEFAULT_MOTOR_POWER) {
         set_mode(DcMotor.RunMode.RUN_USING_ENCODER)
 
-        if (degrees > 0) {
-            // TODO: need tests
-            while (actual_angle() < degrees) {
+        while (op_mode.opModeIsActive()) {
+            if (degrees > 0) {
+                if (actual_angle() > degrees) break
                 set_powers(doubleArrayOf(power, power, -power, -power))
-            }
-        } else {
-            while (actual_angle() > degrees) {
+            } else {
+                if (actual_angle() < degrees) break
                 set_powers(doubleArrayOf(-power, -power, power, power))
             }
         }
-
         set_powers(0.0)
 
-        sleep(.25.toLong())
+        sleep(5L)
 
         reset_angle()
     }
