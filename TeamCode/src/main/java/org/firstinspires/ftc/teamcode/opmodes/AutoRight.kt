@@ -35,7 +35,7 @@ class AutoRight: LinearOpMode() {
 
         waitForStart()
 
-        robot.take=0.645
+        robot.set_take(0.4)
         sleep(2000)
         var cp = slrecog.cyaPercent
         var yp = slrecog.yelPercent
@@ -48,58 +48,102 @@ class AutoRight: LinearOpMode() {
         telemetry.addData("3 zone", (mp>cp) && (mp>yp))
         telemetry.update()
 
+        robot.motor_up1.power=0.4
+        robot.motor_up2.power=-0.4
         robot.set_powers(0.3)
-        robot.up.power=0.6
-        sleep(50)
-        robot.up.power=0.0
-        robot.set_powers(doubleArrayOf(-.4, +.4, +.4, -.4))//влево
-        sleep(1200)
-        robot.up.power=0.6
-        robot.set_powers(0.3)//вперёд
-        sleep(2550)
+        sleep(100)
+        robot.motor_up1.power = .007
+        robot.motor_up2.power = -.007
         robot.set_powers(0)
-        robot.up.power=0.6
-        sleep(950)
-        robot.up.power=0.25
-        sleep(500)
-
-        robot.up.power=0.1
-        robot.set_powers(doubleArrayOf(+.4, +.4, -.4, -.4))//на 45 градусов
-        sleep(300)
-        robot.up.power=0.1
+        robot.set_powers(doubleArrayOf(-.3, +.3, +.3, -.3))//влево
+        sleep(2200)
+        robot.set_powers(0)
+        //sleep(2000)
         robot.set_powers(-0.3)
-        sleep(500)
+        sleep(1000)
+        robot.set_powers(0)
+
+        robot.motor_up1.power=0.4
+        robot.motor_up2.power=-0.4
+        robot.set_powers(0.38)
+        sleep(1200)
+        robot.set_powers(0)
+
+        robot.motor_up1.power=0.4
+        robot.motor_up2.power=-0.4
+        sleep(4100)
+        robot.motor_up1.power=0.5
+        robot.motor_up2.power=-0.5
+        sleep(400)
+
+        robot.motor_up1.power = .007
+        robot.motor_up2.power = -.007
+
+        robot.set_powers(doubleArrayOf(-.5, -.5, +.5, +.5))//на 45 градусов
+        sleep(275)
+        robot.motor_up1.power = .007
+        robot.motor_up2.power = -.007
         robot.set_powers(0.3)
+        sleep(860)
+        robot.motor_up1.power = .007
+        robot.motor_up2.power = -.007
+        robot.set_powers(-0.3)
         sleep(90)
         robot.set_powers(0)
-        sleep(3000)
-        robot.up.power=0.0
-        sleep(800)
-
-        robot.up.power=0.1
-        robot.take = 0.05
+        robot.motor_up1.power = .007
+        robot.motor_up2.power = -.007
         sleep(2000)
-        robot.up.power=0.1
-        robot.set_powers(0.3)
-        sleep(400)
-        robot.set_powers(0)
-        robot.up.power=0.0
-        robot.set_powers(doubleArrayOf(-.4, -.4, +.4, +.4))//на 135 градусов
-        sleep(800)
-        robot.set_powers(0)
 
-        if ((cp>mp) && (cp>yp) && (cp>30)){
-            robot.set_powers(-0.3)
-            sleep(1250)//2 зона
+        robot.motor_up1.power=-0.1
+        robot.motor_up2.power=0.1
+        sleep(150)
+
+        robot.motor_up1.power = .007
+        robot.motor_up2.power = -.007
+        robot.set_take(0.05)
+        sleep(3000)
+
+        robot.motor_up1.power = .007
+        robot.motor_up2.power = -.007
+        robot.set_powers(-0.35)
+        robot.motor_up1.power=-0.2
+        robot.motor_up2.power=0.2
+        sleep(250)
+
+        robot.motor_up1.power = .007
+        robot.motor_up2.power = -.0071
+        robot.set_powers(0)
+        robot.motor_up1.power=0.2
+        robot.motor_up2.power=-0.2
+        sleep(500)
+
+        robot.set_powers(doubleArrayOf(+.5, +.5, -.5, -.5))//на 45 градусов
+        sleep(350)
+        robot.set_powers(0)
+      
+        robot.set_powers(0.35)
+        sleep(830)
+        robot.set_powers(0)
+        robot.set_powers(doubleArrayOf(+.5, +.5, -.5, -.5))//на 90 градусов
+        sleep(470)
+
+
+        if ((cp>mp) && (cp>yp) && (cp>5)){
+            robot.set_powers(0.4)
+            sleep(780)//2 зона
+            robot.set_powers(0)
+
         } else if ((yp<cp) or (yp<mp) or (yp<30)) {
-            robot.set_powers(-0.3)
-            sleep(2600)//3 зона
+            robot.set_powers(0.4)
+            sleep(1800)//3 зона
+            robot.set_powers(0)
+        }
+        else {
+          robot.set_powers(-0.4)
+          sleep(100)
+          robot.set_powers(0)
         }
 
-
-        robot.up.power=-0.4
         robot.set_powers(0)
-        sleep(1200)
-
     }
 }
