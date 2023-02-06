@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.opmodes
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.lib.Robot
 
-@TeleOp(name =  "OldTeleop")
-class TeleOpMain: LinearOpMode() {
+@TeleOp(name =  "MainTeleop")
+class TestMode: LinearOpMode() {
     var a_state = false
     var middle_val = 0.0
     var top_val = 0.0
@@ -22,7 +23,12 @@ class TeleOpMain: LinearOpMode() {
 
     override fun runOpMode() {
         var robot = Robot(this)
-      
+
+        robot.left_rear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        robot.left_front.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        robot.right_front.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        robot.right_rear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
         waitForStart()
 
         while (opModeIsActive()) {
@@ -40,7 +46,7 @@ class TeleOpMain: LinearOpMode() {
             }
 
             if (gamepad2.a) {
-                robot.set_take(0.05)
+                robot.set_take(0.12)
             }
 
             if (gamepad2.x) {
@@ -50,7 +56,7 @@ class TeleOpMain: LinearOpMode() {
             if (gamepad1.b && !b_state) {
                 if (slowmode) {
                     slowmode = false
-                    k = 0.8
+                    k = 0.5
                 } else {
                     slowmode = true
                     k = 0.5
