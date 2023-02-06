@@ -140,7 +140,7 @@ class Robot(val op_mode: LinearOpMode) {
         return busy && pows
     }
 
-    fun set_target_position(target: Double, pows: DoubleArray) {
+    fun set_target_position(target: Int, pows: DoubleArray) {
         left_front.targetPosition = (target * sign(pows[0])).toInt()
         left_rear.targetPosition = (target * sign(pows[1])).toInt()
         right_front.targetPosition = (target * sign(pows[2])).toInt()
@@ -189,6 +189,20 @@ class Robot(val op_mode: LinearOpMode) {
         right_rear.zeroPowerBehavior = zpb
     }
 
+    fun move(ticks: Int, x: Double = 0.0, y: Double = 0.0, r: Double = 0.0) {
+      set_mode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
+      
+      var powers = Utils.calc_powers(x, y, r)
+      set_target_position(ticks, powers)
+      set_powers(powers)
+      set_mode(DcMotor.RunMode.RUN_TO_POSITION)
+      
+      while (is_busy() && op_mode.opModeIsActive()) {}
+      
+      set_powers(0)
+      
+      set_mode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
+    }
 
     fun move(cm: Double, power: Double = DEFAULT_MOTOR_POWER) {
         set_mode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
@@ -203,7 +217,20 @@ class Robot(val op_mode: LinearOpMode) {
         set_powers(0.0)
         set_mode(DcMotor.RunMode.RUN_USING_ENCODER)
     }
+  
+    fun turn(deg: Double, power: Double = DEFAULT_MOTOR_POWER) {
+        set_mode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
 
+        val target = deg / 360.0 * TICK_PER_REV
+        set_target_position(target)
+        set_powers(doubleArrayOf(power, power, power, power))
+        set_mode(DcMotor.RunMode.RUN_TO_POSITION)
+
+        while (is_busy() && op_mode.opModeIsActive()) {}
+
+        set_powers(0.0)
+        set_mode(DcMotor.RunMode.RUN_USING_ENCODER)
+    }
     // max = 5300 tick
     // 5500
     // 4200
