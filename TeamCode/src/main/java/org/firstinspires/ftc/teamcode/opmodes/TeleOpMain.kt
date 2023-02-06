@@ -2,9 +2,10 @@ package org.firstinspires.ftc.teamcode.opmodes
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.lib.Robot
 
-@TeleOp(name =  "OldTeleop")
+@TeleOp(name =  "!Main TeleOp")
 class TeleOpMain: LinearOpMode() {
     var a_state = false
     var middle_val = 0.0
@@ -19,10 +20,18 @@ class TeleOpMain: LinearOpMode() {
     var distance = 0
 
     var no_button = true
-
+    
     override fun runOpMode() {
+        
         var robot = Robot(this)
+        var enc_val = 0
+        var prev_enc = robot.motor_up2.currentPosition
       
+        robot.left_rear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        robot.left_front.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        robot.right_front.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        robot.right_rear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
         waitForStart()
 
         while (opModeIsActive()) {
@@ -40,7 +49,7 @@ class TeleOpMain: LinearOpMode() {
             }
 
             if (gamepad2.a) {
-                robot.set_take(0.05)
+                robot.set_take(0.12)
             }
 
             if (gamepad2.x) {
@@ -50,10 +59,10 @@ class TeleOpMain: LinearOpMode() {
             if (gamepad1.b && !b_state) {
                 if (slowmode) {
                     slowmode = false
-                    k = 0.8
+                    k = 0.7
                 } else {
                     slowmode = true
-                    k = 0.5
+                    k = 0.4
                 }
             }
             b_state = gamepad1.b
@@ -61,11 +70,12 @@ class TeleOpMain: LinearOpMode() {
             robot.drive(
                     k * gamepad1.left_stick_x * 1.1,
                     k * (-gamepad1.left_stick_y).toDouble(),
-                    k * 2/3 * (gamepad1.right_trigger - gamepad1.left_trigger),
+                    k * 3/5 * (gamepad1.right_trigger - gamepad1.left_trigger),
             )
-
+            
+            telemetry.addData("enc1",robot.motor_up2.currentPosition)
             telemetry.update()
-
+            enc_val = robot.motor_up2.currentPosition - prev_enc
             sleep(5)
         }
     }
