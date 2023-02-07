@@ -11,7 +11,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation
 
 @TeleOp(name = "TeleOp camera", group = "TeleOp")
 class TeleOpCamera: LinearOpMode() {
-
     override fun runOpMode() {
         val cam_id = hardwareMap.appContext.resources.getIdentifier(
                 "cameraMonitorViewId", "id", hardwareMap.appContext.packageName

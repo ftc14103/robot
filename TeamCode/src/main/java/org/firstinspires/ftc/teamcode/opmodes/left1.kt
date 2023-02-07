@@ -8,13 +8,13 @@ import org.firstinspires.ftc.teamcode.lib.recognition.SleeveRecognition
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
+import kotlinx.coroutines.*
 
 @Autonomous(name = "left1")
 class left1: LinearOpMode() {
   override fun runOpMode() {
     var robot = Robot(this)
-    
-    
+
     val cam_id = hardwareMap.appContext.resources.getIdentifier(
       "cameraMonitorViewId", "id", hardwareMap.appContext.packageName
     )
