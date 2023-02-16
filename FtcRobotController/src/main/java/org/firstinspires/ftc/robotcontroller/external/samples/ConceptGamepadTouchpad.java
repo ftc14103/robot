@@ -48,6 +48,7 @@ public class ConceptGamepadTouchpad extends LinearOpMode
 
         waitForStart();
 
+
         while (opModeIsActive())
         {
             boolean finger = false;

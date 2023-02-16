@@ -97,13 +97,13 @@ class TeleOpNonBlock: LinearOpMode() {
     while (opModeIsActive()) {
       runBlocking {
         launch {
-          delay(5)
           intake_handler(robot, intake)
+          delay(5)
         }
         
         launch {
-          delay(5)
           drive_handler(robot)
+          delay(5)
         }
         
         telemetry.update()

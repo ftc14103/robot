@@ -10,8 +10,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 import kotlinx.coroutines.*
 
-@Autonomous(name = "left1")
-class left1: LinearOpMode() {
+@Autonomous(name = "right1")
+class right1: LinearOpMode() {
   override fun runOpMode() {
     var robot = Robot(this)
     
@@ -23,11 +23,12 @@ class left1: LinearOpMode() {
     )
     var slrecog = SleeveRecognition()
     camera.setPipeline(slrecog)
+  
     camera.openCameraDeviceAsync(object : OpenCvCamera.AsyncCameraOpenListener {
       override fun onOpened() {
         camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
       }
-  
+    
       override fun onError(err: Int) {}
     })
     
@@ -55,8 +56,8 @@ class left1: LinearOpMode() {
     sleep(100)
     robot.set_powers(0)
     
-    robot.set_powers(doubleArrayOf(-.5, +.5, +.5, -.5))//влево
-    sleep(2100)
+    robot.set_powers(doubleArrayOf(+.3, -.3, -.3, +.3))//влево
+    sleep(4000)
     robot.set_powers(0)
     
     robot.set_powers(-0.3)//назад
@@ -68,20 +69,19 @@ class left1: LinearOpMode() {
     
     robot.set_powers(0)
     
-    
-    robot.set_powers(doubleArrayOf(-.4, +.4, +.4, -.4))//влево
+    robot.set_powers(doubleArrayOf(+.4, -.4, -.4, +.4))//влево
     sleep(800)
     robot.set_powers(0)
     
     robot.motor_up1.power=0.8//вверх
     robot.motor_up2.power=-0.8
-    robot.set_powers(doubleArrayOf(+.4, -.4, -.4, +.4))//вправо
+    robot.set_powers(doubleArrayOf(-.4, +.4, +.4, -.4))//вправо
     sleep(400)
     robot.set_powers(0)
     
     robot.motor_up1.power=0.8//вверх
     robot.motor_up2.power=-0.8
-    robot.set_powers(doubleArrayOf(+.5, +.5, -.5, -.5))//на 45 градусов
+    robot.set_powers(doubleArrayOf(-.5, -.5, +.5, +.5))//на 45 градусов
     sleep(370)
     robot.set_powers(0)
     
@@ -117,40 +117,10 @@ class left1: LinearOpMode() {
     sleep(450)
     robot.set_powers(0)
     sleep(200)
-  
-    if ((yp>cp) && (yp>mp)) {
-      robot.set_powers(doubleArrayOf(+.5, +.5, -.5, -.5))//на 45 градусов
-      sleep(150)
-      robot.set_powers(0)
-      robot.set_powers(-0.3)
-      sleep(800)
-      robot.set_powers(0)
-      
-    } else if (mp>10) {
-      robot.set_powers(doubleArrayOf(+.5, +.5, -.5, -.5))//на 45 градусов
-      sleep(150)
-      robot.set_powers(0)
-      robot.set_powers(-0.3)
-      sleep(800)
-      robot.set_powers(0)
-      robot.set_powers(0.3)
-      sleep(100)
-      robot.set_powers(0)
-      robot.set_powers(doubleArrayOf(+.5, -.5, -.5, +.5))//влево
-      sleep(360)
-      robot.set_powers(0)
-      robot.set_powers(-0.3)
-      sleep(900)
-      robot.set_powers(0)
-      robot.set_powers(0.3)
-      sleep(2800)//3 зона
-      robot.set_powers(0)
-      robot.set_powers(doubleArrayOf(+.5, +.5, -.5, -.5))//на 90 градусов
-      sleep(470)
-      robot.set_powers(0)
     
-    } else {
-      robot.set_powers(doubleArrayOf(+.5, +.5, -.5, -.5))//на 45 градусов
+    
+    if ((yp>cp) && (yp>mp)) {
+      robot.set_powers(doubleArrayOf(-.5, -.5, +.5, +.5))//на 45 градусов
       sleep(150)
       robot.set_powers(0)
       robot.set_powers(-0.3)
@@ -159,8 +129,41 @@ class left1: LinearOpMode() {
       robot.set_powers(0.3)
       sleep(100)
       robot.set_powers(0)
-      robot.set_powers(doubleArrayOf(+.5, -.5, -.5, +.5))//влево
-      sleep(360)
+      robot.set_powers(doubleArrayOf(-.5, +.5, +.5, -.5))//влево
+      sleep(300)
+      robot.set_powers(0)
+      robot.set_powers(-0.3)
+      sleep(900)
+      robot.set_powers(0)
+      robot.set_powers(0.3)
+      sleep(2800)//1 зона
+      robot.set_powers(0)
+      robot.set_powers(doubleArrayOf(-.5, -.5, +.5, +.5))//на 45 градусов
+      sleep(470)
+      robot.set_powers(0)
+    } else if (mp>10) {
+      robot.set_powers(doubleArrayOf(+.5, +.5, -.5, -.5))//на 135 градусов
+      sleep(850)
+      robot.set_powers(-0.3)
+      sleep(180)
+      robot.set_powers(doubleArrayOf(-.4, +.4, +.4, -.4))//влево
+      sleep(1100)
+      robot.set_powers(0.3)
+      sleep(700)//3 зона
+      robot.set_powers(0)
+      
+    } else {
+      robot.set_powers(doubleArrayOf(-.5, -.5, +.5, +.5))//на 45 градусов
+      sleep(150)
+      robot.set_powers(0)
+      robot.set_powers(-0.3)
+      sleep(1000)
+      robot.set_powers(0)
+      robot.set_powers(0.3)
+      sleep(100)
+      robot.set_powers(0)
+      robot.set_powers(doubleArrayOf(-.5, +.5, +.5, -.5))//влево
+      sleep(300)
       robot.set_powers(0)
       robot.set_powers(-0.3)
       sleep(900)
@@ -172,7 +175,6 @@ class left1: LinearOpMode() {
       //sleep(500)
       robot.set_powers(0)
     }
-    
     
     
   }
