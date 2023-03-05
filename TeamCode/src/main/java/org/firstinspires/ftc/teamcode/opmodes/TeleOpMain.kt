@@ -53,8 +53,8 @@ class TeleOpMain: LinearOpMode() {
                 robot.motor_up1.power = -0.7 * gamepad2.left_stick_y
                 robot.motor_up2.power = 0.7 * gamepad2.left_stick_y
             } else {
-                robot.motor_up1.power = .007
-                robot.motor_up2.power = -.007
+                robot.motor_up1.power = .015
+                robot.motor_up2.power = -.015
             }
 
             if (gamepad2.a) {
@@ -64,7 +64,7 @@ class TeleOpMain: LinearOpMode() {
             if (gamepad2.x) {
                 robot.set_take(0.4)
             }
-
+            if (gamepad2.y){robot.turnFlip()}
             if (gamepad1.b && !b_state) {
                 if (slowmode) {
                     slowmode = false
@@ -89,7 +89,8 @@ class TeleOpMain: LinearOpMode() {
             )
             
             telemetry.addData("Slowmode", slowmode)
-            telemetry.addData("enc1",robot.motor_up2.currentPosition)
+            telemetry.addData("motor_up1",robot.motor_up2.currentPosition)
+            telemetry.addData("flip", robot.flip.currentPosition)
             telemetry.update()
             enc_val = robot.motor_up2.currentPosition - prev_enc
             sleep(5)

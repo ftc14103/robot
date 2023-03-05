@@ -1,0 +1,73 @@
+package org.firstinspires.ftc.teamcode.lib
+
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import org.firstinspires.ftc.teamcode.lib.PIDParameters
+import org.firstinspires.ftc.teamcode.lib.Dashmetry
+import com.qualcomm.robotcore.util.ElapsedTime
+
+class PIDRegulator(private val parameters: PIDParameters, private val opMode:LinearOpMode) {
+  var dm = Dashmetry()
+  
+  @RequiresApi(api = Build.VERSION_CODES.N)
+    /**
+     * Поддержание величины из PID-коэффициентов и системы обратной свзяи
+     * setValue - заданное значение
+     * actualValue - реальная величина
+     * kP, kI, kD - коэффициенты PID
+     * d0 - ошибка
+     * d1 - ошибка спустя время обновления показаний датчиков
+     * dDerivative - производная ошибки
+     * dIntegral - интеграл ошибки
+     * u - управляющее воздействие
+     * calcTime - время обновления показаний, подсчёта интеграла, производной
+     * setTime - время установки на курс
+     * deltaTime - время обновления показаний
+     * @param course - курс в градусах, заданное значение
+     */
+  fun set(setValue: Double) {
+    var d0 = setValue - parameters.actualValue!!.get().toDouble()
+    var d1 = setValue - parameters.actualValue!!.get().toDouble()
+    val calcTime = ElapsedTime()
+    val setTime = ElapsedTime()
+    var dIntegral = 0.0
+    var dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
+    var u = parameters.kP * d1 + parameters.kI * dIntegral + parameters.kD * dDerivative
+    setTime.reset()
+    calcTime.reset()
+    while (opMode!!.opModeIsActive() && setTime.seconds() < parameters.maxSettingTime &&
+      (Math.abs(d0) > parameters.valueTolerance ||
+        Math.abs(parameters.velocityValue!!.get().toDouble()) > parameters.velocityTolerance)) {
+      d1 = setValue - parameters.actualValue!!.get().toDouble()
+      dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
+      if (d1 < parameters.integralDelta) {
+        dIntegral += d1 * calcTime.nanoseconds() * 10e-9
+      }
+      u = parameters.kP * d1 + parameters.kI * dIntegral + parameters.kD * dDerivative
+      parameters.setControlAction!!.accept(u)
+      d0 = setValue - parameters.actualValue!!.get().toDouble()
+      if (parameters.showDashmetry) {
+        dm.addData("SettingTime", setTime.seconds())
+        dm.addData("deltaTime", calcTime.nanoseconds() * 10e-9)
+        dm.addLine("")
+        dm.addData("SetValue", setValue)
+        dm.addData("Value", parameters.actualValue!!.get().toDouble())
+        dm.addData("D0", d0)
+        dm.addData("D1", d1)
+        dm.addLine("")
+        dm.addData("dDerivative", dDerivative)
+        dm.addData("dIntegral", dIntegral)
+        dm.addLine("")
+        dm.addData("U", u)
+        dm.addData("uP", parameters.kP * d1)
+        dm.addData("uI", parameters.kI * dIntegral)
+        dm.addData("uD", parameters.kD * dDerivative)
+        dm.update()
+      }
+      calcTime.reset()
+    }
+    parameters.setControlAction!!.accept(0.0)
+    setTime.reset()
+  }
+}
