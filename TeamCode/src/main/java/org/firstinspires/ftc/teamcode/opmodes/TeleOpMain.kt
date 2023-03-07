@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.lib.Robot
+import java.util.function.Consumer
+import java.util.function.Supplier
 
+@Config
 @TeleOp(name =  "!Main TeleOp")
 class TeleOpMain: LinearOpMode() {
     var a_state = false
@@ -19,9 +25,11 @@ class TeleOpMain: LinearOpMode() {
     var k = 1.0
     var taken = false
     var distance = 0
+    var flipState = false
 
     var no_button = true
     
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun runOpMode() {
         var disable_rumble = false
         var double_ramble = Gamepad.RumbleEffect.Builder()
@@ -44,7 +52,13 @@ class TeleOpMain: LinearOpMode() {
         waitForStart()
 
         while (opModeIsActive()) {
-            if (gamepad2.left_stick_y > 0.0f) {
+          /**
+           * Второй геймпад:
+           * Левый стик - поднятие направляющих
+           * A - захват
+           * X - отхват
+           */
+          if (gamepad2.left_stick_y > 0.0f) {// Направляющие
                 distance += 1
                 robot.motor_up1.power = -0.7 * gamepad2.left_stick_y
                 robot.motor_up2.power = 0.7 * gamepad2.left_stick_y
@@ -57,14 +71,24 @@ class TeleOpMain: LinearOpMode() {
                 robot.motor_up2.power = -.015
             }
 
-            if (gamepad2.a) {
+            if (gamepad2.a) {// Захват
                 robot.set_take(0.12)
             }
 
             if (gamepad2.x) {
                 robot.set_take(0.4)
             }
-            if (gamepad2.y){robot.turnFlip()}
+            if (gamepad2.y){
+             if (flipState){
+              robot.flipFront(0.4)
+              flipState = false
+            } else {
+              robot.flipRear(0.4)
+               flipState = true
+            }
+            }
+            
+          
             if (gamepad1.b && !b_state) {
                 if (slowmode) {
                     slowmode = false
@@ -89,7 +113,8 @@ class TeleOpMain: LinearOpMode() {
             )
             
             telemetry.addData("Slowmode", slowmode)
-            telemetry.addData("motor_up1",robot.motor_up2.currentPosition)
+            telemetry.addData("motor_up1", robot.motor_up1.currentPosition)
+            telemetry.addData("motor_up2", robot.motor_up2.currentPosition)
             telemetry.addData("flip", robot.flip.currentPosition)
             telemetry.update()
             enc_val = robot.motor_up2.currentPosition - prev_enc

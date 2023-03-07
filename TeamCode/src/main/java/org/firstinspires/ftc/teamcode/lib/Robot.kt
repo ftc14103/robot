@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.lib
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
@@ -15,8 +15,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.lib.hardware.Motor
 import org.firstinspires.ftc.teamcode.lib.hardware.Servo
 import org.firstinspires.ftc.teamcode.lib.utils.Utils
-import java.util.function.Consumer
-import java.util.function.Supplier
 import kotlin.math.*
 /*
 Control Hub:
@@ -33,9 +31,9 @@ Motors:
 2. motor_up2
 Servo:
 */
+@Config
 class Robot(val op_mode: LinearOpMode) {
   var hardware: MutableMap<String, Any> = mutableMapOf()
-  var flipState: Boolean = true
   var flipFront: Int = 0
   var flipRear: Int = 255
 
@@ -111,18 +109,18 @@ class Robot(val op_mode: LinearOpMode) {
   var motor_up2 = Motor(op_mode.hardwareMap!!.dcMotor!!.get("motor_up2"))
   var liftParam: PIDParameters = PIDParameters(0.0, 0.0, 0.0,
     0.0, 0.0, 5.0, 10.0,
-    {power -> expand(power)}, Supplier<Number>{motor_up1.currentPosition},
-    Supplier<Number>{motor_up1.velocity}, true)
+    {power -> expand(power)}, {motor_up1.currentPosition},
+    {motor_up1.velocity}, true)
   var liftPID: PIDRegulator = PIDRegulator(liftParam, op_mode)
   
   var servo_take = Servo(op_mode.hardwareMap!!.servo!!.get("servo_take"))
   
   var flip =  Motor(op_mode.hardwareMap!!.dcMotor!!.get("flip"))
   @RequiresApi(Build.VERSION_CODES.N)
-  var flipParam: PIDParameters = PIDParameters(0.0, 0.0, 0.0,
-    0.0, 0.0, 5.0, 10.0,
-    Consumer { flip.power }, Supplier<Number>{flip.currentPosition},
-    Supplier<Number>{flip.velocity}, true)
+  var flipParam: PIDParameters = PIDParameters(0.01, 0.01, 0.01,
+    1.0, 1.0, 5.0, 10.0,
+    { flip.power }, {flip.currentPosition},
+    {flip.velocity}, true)
   @RequiresApi(Build.VERSION_CODES.N)
   var flipPID: PIDRegulator = PIDRegulator(flipParam, op_mode)
   
@@ -131,6 +129,7 @@ class Robot(val op_mode: LinearOpMode) {
   init {
     right_front.direction = DcMotorSimple.Direction.REVERSE
     right_rear.direction = DcMotorSimple.Direction.REVERSE
+    flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 
     imu = op_mode.hardwareMap.get(BNO055IMU::class.java, "imu")
     val params = BNO055IMU.Parameters()
@@ -346,11 +345,21 @@ class Robot(val op_mode: LinearOpMode) {
 
     reset_angle()
   }
-  fun turnFlip(){
+  fun flipFront(power:Double){
+    flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+    flip.targetPosition = -260
     flip.mode = DcMotor.RunMode.RUN_TO_POSITION
-    var d:Int = 0
-    var goal:Int = if (flip.currentPosition == flipFront) flipRear else flipFront
-    while (op_mode.opModeIsActive() && flip.currentPosition != goal){flip.power = 0.5}
+    flip.power = -power
+    while (op_mode.opModeIsActive() && (flip.currentPosition >= flip.targetPosition)){}
     flip.power = 0.0
+  }
+  fun flipRear(power: Double){
+    flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+    flip.targetPosition = 260
+    flip.mode = DcMotor.RunMode.RUN_TO_POSITION
+    flip.power = -power
+    while (op_mode.opModeIsActive() && (flip.currentPosition <= flip.targetPosition)){}
+    flip.power = 0.0
+    
   }
 }

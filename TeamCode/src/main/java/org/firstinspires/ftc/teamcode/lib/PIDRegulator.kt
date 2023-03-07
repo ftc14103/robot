@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.lib.PIDParameters
 import org.firstinspires.ftc.teamcode.lib.Dashmetry
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.robotcore.external.Telemetry
 
 class PIDRegulator(private val parameters: PIDParameters, private val opMode:LinearOpMode) {
-  var dm = Dashmetry()
+  var dm: Telemetry  = opMode.telemetry
   
   @RequiresApi(api = Build.VERSION_CODES.N)
     /**
@@ -24,7 +25,6 @@ class PIDRegulator(private val parameters: PIDParameters, private val opMode:Lin
      * calcTime - время обновления показаний, подсчёта интеграла, производной
      * setTime - время установки на курс
      * deltaTime - время обновления показаний
-     * @param course - курс в градусах, заданное значение
      */
   fun set(setValue: Double) {
     var d0 = setValue - parameters.actualValue!!.get().toDouble()
@@ -37,7 +37,7 @@ class PIDRegulator(private val parameters: PIDParameters, private val opMode:Lin
     setTime.reset()
     calcTime.reset()
     while (opMode!!.opModeIsActive() && setTime.seconds() < parameters.maxSettingTime &&
-      (Math.abs(d0) > parameters.valueTolerance ||
+        (Math.abs(d0) > parameters.valueTolerance ||
         Math.abs(parameters.velocityValue!!.get().toDouble()) > parameters.velocityTolerance)) {
       d1 = setValue - parameters.actualValue!!.get().toDouble()
       dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
@@ -70,4 +70,5 @@ class PIDRegulator(private val parameters: PIDParameters, private val opMode:Lin
     parameters.setControlAction!!.accept(0.0)
     setTime.reset()
   }
+  
 }
