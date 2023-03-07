@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.lib
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.acmerobotics.dashboard.DashboardWebSocket
+import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -15,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.lib.hardware.Motor
 import org.firstinspires.ftc.teamcode.lib.hardware.Servo
 import org.firstinspires.ftc.teamcode.lib.utils.Utils
+import org.firstinspires.ftc.teamcode.util.DashboardUtil
 import kotlin.math.*
 /*
 Control Hub:
@@ -34,21 +37,11 @@ Servo:
 @Config
 class Robot(val op_mode: LinearOpMode) {
   var hardware: MutableMap<String, Any> = mutableMapOf()
+  var db: FtcDashboard = FtcDashboard.getInstance()
   var flipFront: Int = 0
   var flipRear: Int = 255
-
-  fun init() {
-    init {
-      "left_front" to DcMotor::class.java
-      "left_rear" to DcMotor::class.java
-      "right_front" to DcMotor::class.java
-      "right_rear" to DcMotor::class.java
-      "motor_up" to DcMotor::class.java
-      "motor_down" to DcMotor::class.java
-      "servo_take" to Servo::class.java
-      "flip" to DcMotor::class.java
-    }
-  }
+  var flipState = true
+  
 
   class InitContext {
     var hardware: MutableMap<String, Any> = mutableMapOf()
@@ -107,7 +100,7 @@ class Robot(val op_mode: LinearOpMode) {
   
   var motor_up1 = Motor(op_mode.hardwareMap!!.dcMotor!!.get("motor_up1"))
   var motor_up2 = Motor(op_mode.hardwareMap!!.dcMotor!!.get("motor_up2"))
-  var liftParam: PIDParameters = PIDParameters(0.0, 0.0, 0.0,
+  public var liftParam: PIDParameters = PIDParameters(0.0, 0.0, 0.0,
     0.0, 0.0, 5.0, 10.0,
     {power -> expand(power)}, {motor_up1.currentPosition},
     {motor_up1.velocity}, true)
@@ -361,5 +354,13 @@ class Robot(val op_mode: LinearOpMode) {
     while (op_mode.opModeIsActive() && (flip.currentPosition <= flip.targetPosition)){}
     flip.power = 0.0
     
+  }
+  fun flip(p:Double, t:Int){
+    flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+    flip.targetPosition = t
+    flip.mode = DcMotor.RunMode.RUN_TO_POSITION
+    flip.power = if (flipState) p else -p
+    while (op_mode.opModeIsActive() && (flip.currentPosition <= flip.targetPosition)){}
+    flip.power = 0.0
   }
 }

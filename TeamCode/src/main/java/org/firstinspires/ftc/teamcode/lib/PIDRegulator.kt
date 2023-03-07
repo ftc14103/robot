@@ -3,17 +3,16 @@ package org.firstinspires.ftc.teamcode.lib
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.teamcode.lib.PIDParameters
-import org.firstinspires.ftc.teamcode.lib.Dashmetry
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.Telemetry
+import kotlin.math.abs
 
 class PIDRegulator(private val parameters: PIDParameters, private val opMode:LinearOpMode) {
-  var dm: Telemetry  = opMode.telemetry
+  private var dm: Telemetry  = opMode.telemetry
   
   @RequiresApi(api = Build.VERSION_CODES.N)
     /**
-     * Поддержание величины из PID-коэффициентов и системы обратной свзяи
+     * Класс PID-регулятора
      * setValue - заданное значение
      * actualValue - реальная величина
      * kP, kI, kD - коэффициенты PID
@@ -28,24 +27,24 @@ class PIDRegulator(private val parameters: PIDParameters, private val opMode:Lin
      */
   fun set(setValue: Double) {
     var d0 = setValue - parameters.actualValue!!.get().toDouble()
-    var d1 = setValue - parameters.actualValue!!.get().toDouble()
+    var d1: Double
     val calcTime = ElapsedTime()
     val setTime = ElapsedTime()
     var dIntegral = 0.0
-    var dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
-    var u = parameters.kP * d1 + parameters.kI * dIntegral + parameters.kD * dDerivative
+    var dDerivative: Double
+    var u: Double
     setTime.reset()
     calcTime.reset()
-    while (opMode!!.opModeIsActive() && setTime.seconds() < parameters.maxSettingTime &&
-        (Math.abs(d0) > parameters.valueTolerance ||
-        Math.abs(parameters.velocityValue!!.get().toDouble()) > parameters.velocityTolerance)) {
+    while (opMode.opModeIsActive() && setTime.seconds() < parameters.maxSettingTime &&
+        (abs(d0) > parameters.valueTolerance ||
+        abs(parameters.velocityValue!!.get().toDouble()) > parameters.velocityTolerance)) {
       d1 = setValue - parameters.actualValue!!.get().toDouble()
       dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
       if (d1 < parameters.integralDelta) {
         dIntegral += d1 * calcTime.nanoseconds() * 10e-9
       }
       u = parameters.kP * d1 + parameters.kI * dIntegral + parameters.kD * dDerivative
-      parameters.setControlAction!!.accept(u)
+      parameters.setControlAction.accept(u)
       d0 = setValue - parameters.actualValue!!.get().toDouble()
       if (parameters.showDashmetry) {
         dm.addData("SettingTime", setTime.seconds())
@@ -67,7 +66,7 @@ class PIDRegulator(private val parameters: PIDParameters, private val opMode:Lin
       }
       calcTime.reset()
     }
-    parameters.setControlAction!!.accept(0.0)
+    parameters.setControlAction.accept(0.0)
     setTime.reset()
   }
   

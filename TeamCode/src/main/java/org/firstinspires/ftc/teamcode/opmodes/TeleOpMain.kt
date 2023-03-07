@@ -19,13 +19,13 @@ class TeleOpMain: LinearOpMode() {
     var top_val = 0.0
     var take_val = 0.0
     var y_state = false
-    var b_state = false
+    private var b_state = false
     var x_state = false
-    var slowmode = false
-    var k = 1.0
+    private var slowmode = false
+    private var k = 1.0
     var taken = false
     var distance = 0
-    var flipState = false
+    private var flipState = false
 
     var no_button = true
     
@@ -57,6 +57,7 @@ class TeleOpMain: LinearOpMode() {
            * Левый стик - поднятие направляющих
            * A - захват
            * X - отхват
+           * Y - переворот
            */
           if (gamepad2.left_stick_y > 0.0f) {// Направляющие
                 distance += 1
@@ -81,11 +82,10 @@ class TeleOpMain: LinearOpMode() {
             if (gamepad2.y){
              if (flipState){
               robot.flipFront(0.4)
-              flipState = false
-            } else {
-              robot.flipRear(0.4)
-               flipState = true
-            }
+              } else {
+                robot.flipRear(0.4)
+              }
+              flipState = flipState.not()
             }
             
           
