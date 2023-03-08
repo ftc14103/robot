@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
@@ -41,6 +42,7 @@ class Robot(val op_mode: LinearOpMode) {
   var flipFront: Int = 0
   var flipRear: Int = 255
   var flipState = true
+  var dm: Telemetry = Telemetry(op_mode)
   
 
   class InitContext {
@@ -90,6 +92,10 @@ class Robot(val op_mode: LinearOpMode) {
     const val DEFAULT_MOTOR_POWER = .5
     const val TICK_PER_REV = 1120
     const val WHEEL_RADIUS = .2
+    const val flipkP = 0.001
+    const val flipkI = 0.001
+    const val flipkD = 0.001
+    const val showDashmetry = true
   }
   //endregion
 
@@ -355,12 +361,48 @@ class Robot(val op_mode: LinearOpMode) {
     flip.power = 0.0
     
   }
-  fun flip(p:Double, t:Int){
-    flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-    flip.targetPosition = t
-    flip.mode = DcMotor.RunMode.RUN_TO_POSITION
-    flip.power = if (flipState) p else -p
-    while (op_mode.opModeIsActive() && (flip.currentPosition <= flip.targetPosition)){}
+  fun flipPID(setValue: Double) {
+    var d0 = setValue - flip.currentPosition
+    var d1: Double
+    val calcTime = ElapsedTime()
+    val setTime = ElapsedTime()
+    var dIntegral = 0.0
+    var dDerivative: Double
+    var u: Double
+    setTime.reset()
+    calcTime.reset()
+    while (op_mode.opModeIsActive() && setTime.seconds() < 5 &&
+      (Math.abs(d0) > 1) ||
+        Math.abs(flip.velocity) > 0.2) {
+      d1 = setValue - flip.currentPosition
+      dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
+      if (d1 < 10) {
+        dIntegral += d1 * calcTime.nanoseconds() * 10e-9
+      }
+      u = flipkP* d1 + flipkI * dIntegral + flipkD * dDerivative
+      flip.power = u
+      d0 = setValue - flip.currentPosition
+      if (showDashmetry) {
+        dm.addDataTM("SettingTime", setTime.seconds())
+        dm.addDataTM("deltaTime", calcTime.nanoseconds() * 10e-9)
+        dm.addLineTM("")
+        dm.addDataTM("SetValue", setValue)
+        dm.addDataTM("Value", flip.currentPosition)
+        dm.addDataTM("D0", d0)
+        dm.addDataTM("D1", d1)
+        dm.addLineTM("")
+        dm.addDataTM("dDerivative", dDerivative)
+        dm.addDataTM("dIntegral", dIntegral)
+        dm.addLineTM("")
+        dm.addDataTM("U", u)
+        dm.addDataTM("uP", flipkP* d1)
+        dm.addDataTM("uI", flipkI * dIntegral)
+        dm.addDataTM("uD", flipkD * dDerivative)
+        dm.updateTM()
+      }
+      calcTime.reset()
+    }
     flip.power = 0.0
+    setTime.reset()
   }
 }

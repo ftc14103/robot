@@ -19,6 +19,7 @@ class TeleOpMain: LinearOpMode() {
     var top_val = 0.0
     var take_val = 0.0
     var y_state = false
+    var gamepad1y_state = true
     private var b_state = false
     var x_state = false
     private var slowmode = false
@@ -87,6 +88,13 @@ class TeleOpMain: LinearOpMode() {
               }
               flipState = flipState.not()
             }
+          if (gamepad1.y){
+            if (gamepad1y_state){
+            robot.flipPID(0.0)
+            } else {
+              robot.flipPID(260.0)
+            }
+          }
             
           
             if (gamepad1.b && !b_state) {
