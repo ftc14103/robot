@@ -94,6 +94,7 @@ class TeleOpMain: LinearOpMode() {
             } else {
               robot.flipPID(260.0)
             }
+            flipState = flipState.not()
           }
             
           

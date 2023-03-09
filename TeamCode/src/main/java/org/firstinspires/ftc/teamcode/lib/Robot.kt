@@ -92,9 +92,8 @@ class Robot(val op_mode: LinearOpMode) {
     const val DEFAULT_MOTOR_POWER = .5
     const val TICK_PER_REV = 1120
     const val WHEEL_RADIUS = .2
-    const val flipkP = 0.01
-    const val flipkI = 0.001
-    const val flipkD = 0.001
+    const val flipkP = 0.003
+    const val flipkD = 0.002
     const val showDashmetry = true
   }
   //endregion
@@ -375,15 +374,12 @@ class Robot(val op_mode: LinearOpMode) {
     var u: Double
     setTime.reset()
     calcTime.reset()
-    while (op_mode.opModeIsActive() && setTime.seconds() < 5 &&
+    while (op_mode.opModeIsActive() && setTime.seconds() < 0.5 &&
       (abs(d0) > 1 ||
         abs(flip.velocity) > 0.2)) {
       d1 = setValue - flip.currentPosition
       dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
-      if (d1 < 10) {
-        dIntegral += d1 * calcTime.nanoseconds() * 10e-9
-      }
-      u = flipkP * d1  + flipkI * dIntegral + flipkD * dDerivative
+      u = flipkP * d1 + flipkD * dDerivative
       flip.power = u
       d0 = setValue - flip.currentPosition
       if (showDashmetry) {
@@ -400,7 +396,6 @@ class Robot(val op_mode: LinearOpMode) {
         tm.addLine("")
         tm.addData("U", u)
         tm.addData("uP", flipkP * d1)
-        tm.addData("uI", flipkI * dIntegral)
         tm.addData("uD", flipkD * dDerivative)
         tm.update()
       }
@@ -410,4 +405,5 @@ class Robot(val op_mode: LinearOpMode) {
     setTime.reset()
     
   }
+  
 }

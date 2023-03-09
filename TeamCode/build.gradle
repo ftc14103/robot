@@ -28,6 +28,9 @@ android {
     androidResources {
         noCompress 'tflite'
     }
+    defaultConfig {
+        compileSdkPreview ="UpsideDownCake"
+    }
 }
 
 dependencies {
