@@ -7,26 +7,27 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 class Telemetry(opMode: LinearOpMode) {
 private val db: Telemetry? = FtcDashboard.getInstance().telemetry
   private val tm: Telemetry? = opMode.telemetry
-  fun addDataDB(caption: String, value: Double) {
+  @JvmName("addData1")
+  fun addData(caption: String, value: Double) {
     db!!.addData(caption, value)
   }
   
-  fun addDataDB(caption: String?, value: Int) {
+  fun addData(caption: String?, value: Int) {
     db!!.addData(caption, value)
   }
   
-  fun addDataDB(caption: String, value: Boolean) {
+  fun addData(caption: String, value: Boolean) {
     db!!.addData(caption, value)
   }
   
-  fun addLineDB(caption: String?) {
+  fun addLine(caption: String?) {
     db!!.addLine(caption)
   }
   
-  fun updateDB() {
+  fun update() {
     db!!.update()
   }
-  fun addDataTM(caption: String?, value: Double) {
+  fun addData(caption: String?, value: Double) {
     tm!!.addData(caption, value)
   }
   

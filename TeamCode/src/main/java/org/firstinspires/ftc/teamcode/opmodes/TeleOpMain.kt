@@ -89,8 +89,8 @@ class TeleOpMain: LinearOpMode() {
               flipState = flipState.not()
             }
           if (gamepad1.y){
-            if (gamepad1y_state){
-            robot.flipPID(0.0)
+            if(flipState){
+              robot.flipPID(-260.0)
             } else {
               robot.flipPID(260.0)
             }

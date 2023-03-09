@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 import kotlin.math.abs
 
 class PIDRegulator(private val parameters: PIDParameters, private val opMode:LinearOpMode) {
-  private var dm: Telemetry  = opMode.telemetry
+  private var tm: Telemetry  = opMode.telemetry
   
   @RequiresApi(api = Build.VERSION_CODES.N)
     /**
@@ -47,24 +47,25 @@ class PIDRegulator(private val parameters: PIDParameters, private val opMode:Lin
       parameters.setControlAction.accept(u)
       d0 = setValue - parameters.actualValue!!.get().toDouble()
       if (parameters.showDashmetry) {
-        dm.addData("SettingTime", setTime.seconds())
-        dm.addData("deltaTime", calcTime.nanoseconds() * 10e-9)
-        dm.addLine("")
-        dm.addData("SetValue", setValue)
-        dm.addData("Value", parameters.actualValue!!.get().toDouble())
-        dm.addData("D0", d0)
-        dm.addData("D1", d1)
-        dm.addLine("")
-        dm.addData("dDerivative", dDerivative)
-        dm.addData("dIntegral", dIntegral)
-        dm.addLine("")
-        dm.addData("U", u)
-        dm.addData("uP", parameters.kP * d1)
-        dm.addData("uI", parameters.kI * dIntegral)
-        dm.addData("uD", parameters.kD * dDerivative)
-        dm.update()
+        tm.addData("SettingTime", setTime.seconds())
+        tm.addData("deltaTime", calcTime.nanoseconds() * 10e-9)
+        tm.addLine("")
+        tm.addData("SetValue", setValue)
+        tm.addData("Value", parameters.actualValue!!.get().toDouble())
+        tm.addData("D0", d0)
+        tm.addData("D1", d1)
+        tm.addLine("")
+        tm.addData("dDerivative", dDerivative)
+        tm.addData("dIntegral", dIntegral)
+        tm.addLine("")
+        tm.addData("U", u)
+        tm.addData("uP", parameters.kP * d1)
+        tm.addData("uI", parameters.kI * dIntegral)
+        tm.addData("uD", parameters.kD * dDerivative)
+        tm.update()
       }
       calcTime.reset()
+      tm.addLine("PID завершил работу")
     }
     parameters.setControlAction.accept(0.0)
     setTime.reset()
