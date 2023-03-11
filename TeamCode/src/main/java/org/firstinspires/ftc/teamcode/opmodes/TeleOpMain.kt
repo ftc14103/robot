@@ -69,13 +69,8 @@ class TeleOpMain() : LinearOpMode() {
                 robot.motor_up1.power = -0.8 * gamepad2.left_stick_y
                 robot.motor_up2.power = 0.8 * gamepad2.left_stick_y
             } else {
-<<<<<<< Updated upstream
                 robot.motor_up1.power = .015
                 robot.motor_up2.power = -.015
-=======
-                robot.motor_up1.power = .022
-                robot.motor_up2.power = -.022
->>>>>>> Stashed changes
             }
 
             if (gamepad2.a) {// Захват

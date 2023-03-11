@@ -409,12 +409,6 @@ class Robot(val op_mode: LinearOpMode) {
     }
     flip.power = 0.0
     setTime.reset()
-<<<<<<< Updated upstream
-    
-  }
-  
-=======
-    return
     }
   
     class flipFrontAutomate(): Runnable{
@@ -441,5 +435,4 @@ class Robot(val op_mode: LinearOpMode) {
         flip.power = 0.0
       }
   }
->>>>>>> Stashed changes
 }
