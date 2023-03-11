@@ -65,17 +65,14 @@ class lefthigh: LinearOpMode() {
     robot.motor_up2.power = 0.0
     
     robot.set_powers(0.4)//вперед
-    sleep(2300)
-    robot.set_powers(0)
-    robot.set_powers(-0.4)//вперед
-    sleep(300)
+    sleep(2000)
     robot.set_powers(0)
   
     robot.flipPID(260.0)
     sleep(2000)
     
     robot.set_powers(doubleArrayOf(+.4, +.4, -.4, -.4))//на 45 градусов
-    sleep(300)
+    sleep(320)
     robot.set_powers(0)
   
     robot.motor_up1.power=0.8//вверх
@@ -115,8 +112,15 @@ class lefthigh: LinearOpMode() {
     sleep(2000)
     
     robot.set_powers(doubleArrayOf(+.4, +.4, -.4, -.4))//на 45 градусов
-    sleep(300)
+    sleep(320)
     robot.set_powers(0)
+    
+    robot.motor_up1.power=-0.3//вниз
+    robot.motor_up2.power=0.3
+    sleep(1550)
+  
+    robot.flipPID(-260.0)
+    sleep(2000)
     
     if ((yp>cp) && (yp>mp)) {
       robot.set_powers(-0.4)

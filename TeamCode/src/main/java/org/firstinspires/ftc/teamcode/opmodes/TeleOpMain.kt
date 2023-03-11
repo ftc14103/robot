@@ -116,9 +116,9 @@ class TeleOpMain() : LinearOpMode() {
             b_state = gamepad1.b
 
             robot.drive(
-                    k * gamepad1.left_stick_x * 1.1,
+                    -k * gamepad1.left_stick_x * 1.1,
                     k * (-gamepad1.left_stick_y).toDouble(),
-                    k * 2/3 * (gamepad1.right_trigger - gamepad1.left_trigger),
+                    k * 4/7 * (gamepad1.right_trigger - gamepad1.left_trigger),
             )
             
             telemetry.addData("Slowmode", slowmode)

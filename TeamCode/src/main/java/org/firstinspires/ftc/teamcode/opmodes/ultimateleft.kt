@@ -53,7 +53,7 @@ class ultimateleft: LinearOpMode() {
     robot.set_powers(0.4)//вперед
     sleep(100)
     robot.set_powers(0)
-  
+    
     robot.motor_up1.power=0.8//вверх
     robot.motor_up2.power=-0.8
     sleep(100)
@@ -62,25 +62,24 @@ class ultimateleft: LinearOpMode() {
     robot.motor_up2.power = 0.0
   
     robot.set_powers(0.4)//вперед
-    sleep(2300)
-    robot.set_powers(0)
-    robot.set_powers(-0.4)//вперед
-    sleep(300)
+    sleep(2000)
     robot.set_powers(0)
   
     robot.flipPID(260.0)
-    sleep(2000)
+    sleep(1500)
   
+    robot.motor_up1.power=0.8//вверх
+    robot.motor_up2.power=-0.8
     robot.set_powers(doubleArrayOf(+.4, +.4, -.4, -.4))//на 45 градусов
-    sleep(300)
+    sleep(320)
     robot.set_powers(0)
   
     robot.motor_up1.power=0.8//вверх
     robot.motor_up2.power=-0.8
-    sleep(1550)
+    sleep(1230)
   
     robot.flipPID(260.0)
-    sleep(2000)
+    sleep(1000)
   
     robot.motor_up1.power = .022
     robot.motor_up2.power = -.022
@@ -96,7 +95,7 @@ class ultimateleft: LinearOpMode() {
     robot.motor_up1.power = .022
     robot.motor_up2.power = -.022
   
-    sleep(1500)
+    sleep(500)
   
     robot.motor_up1.power = .022
     robot.motor_up2.power = -.022
@@ -108,93 +107,102 @@ class ultimateleft: LinearOpMode() {
     robot.set_powers(-0.3)//вперед
     sleep(600)
     robot.set_powers(0)
-    robot.flipPID(260.0)
-    sleep(2000)
+    robot.motor_up1.power = .022
+    robot.motor_up2.power = -.022
+    robot.flipPID(-260.0)
+    sleep(1000)
   
+    robot.motor_up1.power = .022
+    robot.motor_up2.power = -.022
     robot.set_powers(doubleArrayOf(+.4, +.4, -.4, -.4))//на 45 градусов
-    sleep(300)
+    sleep(320)
     robot.set_powers(0)
+    robot.flipPID(-260.0)
+    sleep(1000)
     
     //установка конуса из стопки
     robot.set_powers(-0.4)//вперед
-    robot.motor_up1.power=-0.22
-    robot.motor_up2.power=0.22
+    robot.motor_up1.power=-0.2
+    robot.motor_up2.power=0.2
     sleep(1000)
     robot.set_powers(0)
   
-    robot.motor_up1.power=-0.22
-    robot.motor_up2.power=0.22
+    robot.motor_up1.power=-0.2
+    robot.motor_up2.power=0.2
     sleep(300)
   
     robot.motor_up1.power = .022
     robot.motor_up2.power = -.022
     robot.set_take(0.4)
-    sleep(500)
+    sleep(1000)
   
     robot.motor_up1.power=0.8//вверх
     robot.motor_up2.power=-0.8
     sleep(300)
     
-    robot.motor_up1.power = .022
-    robot.motor_up2.power = -.022
+    robot.motor_up1.power=0.8//вверх
+    robot.motor_up2.power=-0.8
     robot.set_powers(0.4)//вперед
     sleep(600)
     robot.set_powers(0)
   
-    robot.flipPID(260.0)
-    sleep(1000)
-  
+    robot.motor_up1.power=0.0//вверх
+    robot.motor_up2.power=0.0
+    
+    //robot.flipPID(260.0)
+    //sleep(1000)
+    
+    robot.motor_up1.power=0.8//вверх
+    robot.motor_up2.power=-0.8
     robot.set_powers(doubleArrayOf(-.4, -.4, +.4, +.4))//на 45 градусов
     sleep(300)
     robot.set_powers(0)
-  
-    robot.motor_up1.power=0.8//вверх
-    robot.motor_up2.power=-0.8
+    
+    robot.flipPID(260.0)
     sleep(1500)
   
-    robot.motor_up1.power = .02
-    robot.motor_up2.power = -.02
+    robot.motor_up1.power = .022
+    robot.motor_up2.power = -.022
     robot.set_powers(0.3)//к узлу
     sleep(600)
     robot.set_powers(0)
   
-    robot.motor_up1.power = .02
-    robot.motor_up2.power = -.02
+    robot.motor_up1.power = .022
+    robot.motor_up2.power = -.022
     robot.set_powers(-0.3)//к узлу
     sleep(70)
     robot.set_powers(0)
-    robot.motor_up1.power = .02
-    robot.motor_up2.power = -.02
+    robot.motor_up1.power = .022
+    robot.motor_up2.power = -.022
   
-    sleep(1500)
+    sleep(500)
   
-    robot.motor_up1.power = .02
-    robot.motor_up2.power = -.02
+    robot.motor_up1.power = .022
+    robot.motor_up2.power = -.022
     robot.set_take(0.12)
-    sleep(1000)
+    sleep(500)
   
-    robot.motor_up1.power = .02
-    robot.motor_up2.power = -.02
+    robot.motor_up1.power = .022
+    robot.motor_up2.power = -.022
     robot.set_powers(-0.3)//вперед
     sleep(600)
     robot.set_powers(0)
-    robot.flipPID(260.0)
-    sleep(2000)
+    robot.flipPID(-260.0)
+    sleep(1000)
   
     robot.set_powers(doubleArrayOf(+.4, +.4, -.4, -.4))//на 45 градусов
     sleep(300)
     robot.set_powers(0)
+    
     //конец установки конуса
-  
-  
-  
+    
     if ((yp>cp) && (yp>mp)) {
-      robot.set_powers(-0.3)
-      sleep(800)
+      robot.set_powers(-0.4)
+      sleep(1000)
       robot.set_powers(0)
     } else if (mp>10) {
-      robot.set_powers(0.3)
-      sleep(800)
+      robot.set_powers(0.4)
+      sleep(1000)
       robot.set_powers(0)
     }
     
