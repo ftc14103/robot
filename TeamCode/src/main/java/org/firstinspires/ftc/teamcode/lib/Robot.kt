@@ -10,7 +10,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
@@ -19,6 +21,8 @@ import org.firstinspires.ftc.teamcode.lib.hardware.Motor
 import org.firstinspires.ftc.teamcode.lib.hardware.Servo
 import org.firstinspires.ftc.teamcode.lib.utils.Utils
 import org.firstinspires.ftc.teamcode.util.DashboardUtil
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import kotlin.math.*
 /*
 Control Hub:
@@ -38,6 +42,8 @@ Servo:
 @Config
 class Robot(val op_mode: LinearOpMode) {
   var hardware: MutableMap<String, Any> = mutableMapOf()
+  var ex: ExecutorService = Executors.newSingleThreadExecutor()
+  
   var db: FtcDashboard = FtcDashboard.getInstance()
   var flipFront: Int = 0
   var flipRear: Int = 255
@@ -96,6 +102,7 @@ class Robot(val op_mode: LinearOpMode) {
     const val flipkD = 0.002
     const val showDashmetry = true
   }
+  
   //endregion
   var right_front = Motor(op_mode.hardwareMap!!.dcMotor!!.get("right_front"))
   var right_rear = Motor(op_mode.hardwareMap!!.dcMotor!!.get("right_rear"))
@@ -359,7 +366,6 @@ class Robot(val op_mode: LinearOpMode) {
     flip.power = 0.0
     
   }
-  @RequiresApi(Build.VERSION_CODES.N)
   fun flipPID(setValue: Double) {
     flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
     flip.targetPosition = setValue.toInt()
@@ -403,7 +409,37 @@ class Robot(val op_mode: LinearOpMode) {
     }
     flip.power = 0.0
     setTime.reset()
+<<<<<<< Updated upstream
     
   }
   
+=======
+    return
+    }
+  
+    class flipFrontAutomate(): Runnable{
+      override fun run() {
+        var flip =  Motor(hardwareMap!!.dcMotor!!.get("flip"))
+        flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        flip.targetPosition = 260
+        flip.mode = DcMotor.RunMode.RUN_TO_POSITION
+        var d0 = 260 - flip.currentPosition
+        var d1: Double
+        val calcTime = ElapsedTime()
+        val setTime = ElapsedTime()
+        var dDerivative: Double
+        var u: Double
+        setTime.reset()
+        calcTime.reset()
+        while ( setTime.seconds() < 3 && (abs(d0) > 1 || abs(flip.velocity) > 0.2)) {
+          d1 = (260 - flip.currentPosition).toDouble()
+          dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
+          u = flipkP * d1 + flipkD * dDerivative
+          flip.power = u
+          d0 = 260 - flip.currentPosition
+        }
+        flip.power = 0.0
+      }
+  }
+>>>>>>> Stashed changes
 }

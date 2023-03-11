@@ -8,12 +8,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.lib.Robot
-import java.util.function.Consumer
-import java.util.function.Supplier
+import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
 
 @Config
 @TeleOp(name =  "!Main TeleOp")
-class TeleOpMain: LinearOpMode() {
+class TeleOpMain() : LinearOpMode() {
     var a_state = false
     var middle_val = 0.0
     var top_val = 0.0
@@ -27,8 +27,8 @@ class TeleOpMain: LinearOpMode() {
     var taken = false
     var distance = 0
     private var flipState = false
-
-    var no_button = true
+  
+  var no_button = true
     
     @RequiresApi(Build.VERSION_CODES.N)
     override fun runOpMode() {
@@ -62,15 +62,20 @@ class TeleOpMain: LinearOpMode() {
            */
           if (gamepad2.left_stick_y > 0.0f) {// Направляющие
                 distance += 1
-                robot.motor_up1.power = -0.7 * gamepad2.left_stick_y
-                robot.motor_up2.power = 0.7 * gamepad2.left_stick_y
+                robot.motor_up1.power = -0.4 * gamepad2.left_stick_y
+                robot.motor_up2.power = 0.4 * gamepad2.left_stick_y
             } else if (gamepad2.left_stick_y < 0.0f) {
                 distance -= 1
-                robot.motor_up1.power = -0.7 * gamepad2.left_stick_y
-                robot.motor_up2.power = 0.7 * gamepad2.left_stick_y
+                robot.motor_up1.power = -0.8 * gamepad2.left_stick_y
+                robot.motor_up2.power = 0.8 * gamepad2.left_stick_y
             } else {
+<<<<<<< Updated upstream
                 robot.motor_up1.power = .015
                 robot.motor_up2.power = -.015
+=======
+                robot.motor_up1.power = .022
+                robot.motor_up2.power = -.022
+>>>>>>> Stashed changes
             }
 
             if (gamepad2.a) {// Захват
