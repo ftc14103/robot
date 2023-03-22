@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.util.ElapsedTime
 import kotlin.math.*
 
-class Lift(hw: HardwareMap) {
+class LiftIntake(hw: HardwareMap) {
   private var motor1: DcMotor = hw.dcMotor.get("motor_up1")
   private var motor2: DcMotor = hw.dcMotor.get("motor_up2")
   

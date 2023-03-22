@@ -40,6 +40,7 @@ class TeleOpMain() : LinearOpMode() {
           .build()
       
         var robot = Robot(this)
+        var lift = LiftIntake(this.hardwareMap)
         var enc_val = 0
         var prev_enc = robot.motor_up2.currentPosition
       
@@ -96,6 +97,15 @@ class TeleOpMain() : LinearOpMode() {
             }
             flipState = flipState.not()
           }
+
+            if (gamepad1.dpad_up && lift.is_stable()) {
+              var a = lift.get_target()
+              list.set_level_number(lift.get_level_number() - 0.5)
+              if (a == 0) {
+                lift.set_target(a)
+              }
+              sleep(100)
+            }
             
           
             if (gamepad1.b && !b_state) {
