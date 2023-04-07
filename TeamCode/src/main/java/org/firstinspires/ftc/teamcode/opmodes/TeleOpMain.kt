@@ -19,6 +19,7 @@ class TeleOpMain() : LinearOpMode() {
   private var k = 1.0
   private var distance = 0
   private var flipState = false
+  private var lift_uppness = 0.0
   
   @RequiresApi(Build.VERSION_CODES.N)
   override fun runOpMode() {
@@ -81,22 +82,16 @@ class TeleOpMain() : LinearOpMode() {
         flipState = flipState.not()
       }
       
-      if (gamepad1.dpad_up && lift.is_stable()) {
-        var a = lift.get_target()
-        lift.set_level_number(lift.get_level_number() - 1.0)
-        if (a == 0.0) {
-          lift.set_target(a)
-        }
-        sleep(100)
+      if (gamepad1.dpad_up) {
+        lift_uppness += 1.0
+        
+        robot.liftPID.set(lift_uppness)
       }
       
-      if (gamepad1.dpad_down && lift.is_stable()) {
-        var b = lift.get_target()
-        lift.set_level_number(lift.get_level_number() + 1.0)
-        if (b == 0.0) {
-          lift.set_target(b)
-        }
-        sleep(100)
+      if (gamepad1.dpad_down) {
+        lift_uppness -= 1.0
+        
+        robot.liftPID.set(lift_uppness)
       }
       
       if (gamepad1.b && !b_state) {
@@ -126,6 +121,7 @@ class TeleOpMain() : LinearOpMode() {
       telemetry.addData("lift err", lift.get_avg_err())
       telemetry.addData("lift level", lift.get_level_number())
       telemetry.addData("lift stable", lift.is_stable())
+      telemetry.addData("lift_uppness", lift_uppness)
       telemetry.addData("motor_up1 power", robot.motor_up1.power)
       telemetry.addData("motor_up2 power", robot.motor_up2.power)
       telemetry.addData("motor_up1 target", robot.motor_up1.targetPosition)

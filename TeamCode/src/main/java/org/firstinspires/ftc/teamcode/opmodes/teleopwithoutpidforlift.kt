@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.lib.LiftIntake
 import org.firstinspires.ftc.teamcode.lib.Robot
+import kotlin.concurrent.thread
 
 @Config
 @TeleOp(name = "teleopnopid")
@@ -19,6 +20,7 @@ class teleopwithoutpidforlift : LinearOpMode() {
   private var k = 1.0
   private var distance = 0
   private var flipState = false
+  private var flip_thread = 0
   
   @RequiresApi(Build.VERSION_CODES.N)
   override fun runOpMode() {
@@ -31,6 +33,24 @@ class teleopwithoutpidforlift : LinearOpMode() {
     
     var robot = Robot(this)
     //var lift = LiftIntake(this.hardwareMap)
+    var flip = thread(true) {
+      telemetry.log()
+      when (flip_thread) {
+        -1 -> {
+          robot.flipPID(-260.0)
+          robot.flipPID(-260.0)
+          robot.flipPID(80.0)
+          flip_thread = 0
+        }
+        1 -> {
+          robot.flipPID(160.0)
+          flip_thread = 0
+        }
+        else -> {
+        
+        }
+      }
+    }
     
     robot.left_rear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     robot.left_front.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -53,8 +73,8 @@ class teleopwithoutpidforlift : LinearOpMode() {
        */
       if (gamepad2.left_stick_y > 0.0f) {// Направляющие
         distance += 1
-        robot.motor_up1.power = -0.8 * gamepad2.left_stick_y
-        robot.motor_up2.power = 0.8 * gamepad2.left_stick_y
+        robot.motor_up1.power = -1.0 * gamepad2.left_stick_y
+        robot.motor_up2.power = 1.0 * gamepad2.left_stick_y
       } else if (gamepad2.left_stick_y < 0.0f) {
         distance -= 1
         robot.motor_up1.power = -1.0 * gamepad2.left_stick_y
@@ -69,16 +89,18 @@ class teleopwithoutpidforlift : LinearOpMode() {
       }
       
       if (gamepad2.x) {//захват
-        robot.set_take(0.43)
+        robot.set_take(0.46)
       }
       
       if (gamepad2.y) {
         if (flipState) {
-          robot.flipPID(-260.0)
-          robot.flipPID(-260.0)
-          robot.flipPID(80.0)
+          // robot.flipPID(-260.0)
+          // robot.flipPID(-260.0)
+          // robot.flipPID(80.0)
+          flip_thread = -1
         } else {
-          robot.flipPID(160.0)
+          // robot.flipPID(160.0)
+          flip_thread = 1
         }
         flipState = !flipState
       }
@@ -104,13 +126,13 @@ class teleopwithoutpidforlift : LinearOpMode() {
       if (gamepad1.b && !b_state) {
         if (slowmode) {
           slowmode = false
-          k = 1.0
+          k = 0.7
           if (!disable_rumble) {
             gamepad1.runRumbleEffect(double_ramble)
           }
         } else {
           slowmode = true
-          k = 0.7
+          k = 0.5
           if (!disable_rumble) {
             gamepad1.rumble(1.0, 1.0, 500)
           }
@@ -119,8 +141,8 @@ class teleopwithoutpidforlift : LinearOpMode() {
       b_state = gamepad1.b
       
       robot.drive(
-        -k * gamepad1.left_stick_x * 1.1,
-        k * (-gamepad1.left_stick_y).toDouble(),
+        k * gamepad1.left_stick_x * 1.1,
+        k * (gamepad1.left_stick_y).toDouble(),
         k * 4 / 7 * (gamepad1.right_trigger - gamepad1.left_trigger),
       )
       

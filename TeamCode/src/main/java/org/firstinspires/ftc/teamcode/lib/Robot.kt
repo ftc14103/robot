@@ -111,10 +111,18 @@ class Robot(val op_mode: LinearOpMode) {
   
   var motor_up1 = Motor(op_mode.hardwareMap!!.dcMotor!!.get("motor_up1"))
   var motor_up2 = Motor(op_mode.hardwareMap!!.dcMotor!!.get("motor_up2"))
-  public var liftParam: PIDParameters = PIDParameters(0.0, 0.0, 0.0,
-    0.0, 0.0, 5.0, 10.0,
-    {power -> expand(power)}, {motor_up1.currentPosition},
-    {motor_up1.velocity}, true)
+  var liftParam: PIDParameters = PIDParameters(0.01, 0.01, 0.01,
+    1.0, 1.0, 5.0, 10.0,
+    { power ->
+      motor_up1.power = power
+      motor_up2.power = -power
+    },
+    {
+      motor_up1.currentPosition
+    },
+    {
+      motor_up1.velocity
+    }, true)
   var liftPID: PIDRegulator = PIDRegulator(liftParam, op_mode)
   
   var servo_take = Servo(op_mode.hardwareMap!!.servo!!.get("servo_take"))
