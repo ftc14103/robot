@@ -98,7 +98,7 @@ class Robot(val op_mode: LinearOpMode) {
     const val DEFAULT_MOTOR_POWER = .5
     const val TICK_PER_REV = 1120
     const val WHEEL_RADIUS = .2
-    const val flipkP = 0.003
+    const val flipkP = 0.01
     const val flipkD = 0.002
     const val showDashmetry = true
   }
