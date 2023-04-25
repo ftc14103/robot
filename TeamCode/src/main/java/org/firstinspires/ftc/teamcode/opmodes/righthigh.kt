@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
@@ -11,9 +9,8 @@ import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 
-@Autonomous(name = "lefthigh")
-class lefthigh: LinearOpMode() {
-  @RequiresApi(Build.VERSION_CODES.N)
+@Autonomous(name = "righthigh")
+class righthigh: LinearOpMode() {
   override fun runOpMode() {
     var robot = Robot(this)
     
@@ -25,17 +22,18 @@ class lefthigh: LinearOpMode() {
     )
     var slrecog = SleeveRecognition()
     camera.setPipeline(slrecog)
+  
     camera.openCameraDeviceAsync(object : OpenCvCamera.AsyncCameraOpenListener {
       override fun onOpened() {
         camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
       }
-      
+    
       override fun onError(err: Int) {}
     })
     
     waitForStart()
     
-    robot.set_take(0.4)
+    robot.set_take(0.46)
     sleep(2000)
     var cp = slrecog.cyaPercent
     var yp = slrecog.yelPercent
@@ -52,91 +50,60 @@ class lefthigh: LinearOpMode() {
     telemetry.addData("3 zone", (mp>cp) && (mp>yp))
     telemetry.addData("enc1",robot.motor_up2.currentPosition)
     telemetry.update()
-  
-    robot.set_powers(0.4)//вперед
-    sleep(100)
-    robot.set_powers(0)
-    
-    robot.motor_up1.power=0.8//вверх
+
+    robot.motor_up1.power=0.8
     robot.motor_up2.power=-0.8
-    sleep(100)
-  
-    robot.motor_up1.power = 0.0//вверх
-    robot.motor_up2.power = 0.0
-    
-    robot.set_powers(0.4)//вперед
-    sleep(2000)
+    robot.move (2500, 0.0, 0.4, 0.0)
+    robot.move (200, 0.0, -0.4, 0.0)
+    robot.move (300, 0.0, 0.0, -0.4)
+
+    robot.motor_up1.power = .015
+    robot.motor_up2.power = -.015
+    robot.move(800, 0.0, 0.4, 0.0)
+    robot.move(50, 0.0, -0.4, 0.0)
+    robot.motor_up1.power = .015
+    robot.motor_up2.power = -.015
     robot.set_powers(0)
-  
-    robot.flipPID(260.0)
-    sleep(2000)
-    
-    robot.set_powers(doubleArrayOf(+.4, +.4, -.4, -.4))//на 45 градусов
-    sleep(320)
-    robot.set_powers(0)
-  
-    robot.motor_up1.power=0.8//вверх
-    robot.motor_up2.power=-0.8
-    sleep(1550)
-  
-    robot.flipPID(260.0)
-    sleep(2000)
-  
-    robot.motor_up1.power = .022
-    robot.motor_up2.power = -.022
-    robot.set_powers(0.3)//к узлу
-    sleep(600)
-    robot.set_powers(0)
-  
-    robot.motor_up1.power = .022
-    robot.motor_up2.power = -.022
-    robot.set_powers(-0.3)//к узлу
-    sleep(70)
-    robot.set_powers(0)
-    robot.motor_up1.power = .022
-    robot.motor_up2.power = -.022
-    
-    sleep(1500)
-  
-    robot.motor_up1.power = .022
-    robot.motor_up2.power = -.022
-    robot.set_take(0.12)
-    sleep(1000)
-  
-    robot.motor_up1.power = .022
-    robot.motor_up2.power = -.022
-    robot.set_powers(-0.3)//вперед
-    sleep(600)
-    robot.set_powers(0)
-    robot.flipPID(260.0)
-    sleep(2000)
-    
-    robot.set_powers(doubleArrayOf(+.4, +.4, -.4, -.4))//на 45 градусов
-    sleep(320)
-    robot.set_powers(0)
-    
-    robot.motor_up1.power=-0.3//вниз
+    sleep (1000)
+
+    robot.motor_up1.power=-0.3
     robot.motor_up2.power=0.3
-    sleep(1550)
-  
-    robot.flipPID(-260.0)
-    sleep(2000)
-    
+    sleep(300)
+    robot.motor_up1.power = .015
+    robot.motor_up2.power = -.015
+    robot.set_take(0.14)
+    sleep(500)
+
+    robot.motor_up1.power=1.0
+    robot.motor_up2.power=-1.0
+    sleep(150)
+    robot.motor_up1.power = -0.8
+    robot.motor_up2.power = 0.8
+    robot.move(450, 0.0, -0.4, 0.0)
+    robot.set_powers(0)
+    robot.motor_up1.power = .015
+    robot.motor_up2.power = -.015
+    robot.flipPID(200.0)
+    sleep(800)
+
+    robot.motor_up1.power = -1.0
+    robot.motor_up2.power = 1.0
+    robot.move (300, 0.0, 0.0, -0.4)
+
     if ((yp>cp) && (yp>mp)) {
-      robot.set_powers(-0.4)
-      sleep(1000)
+      robot.move (1300, 0.0, 0.4, 0.0)
       robot.set_powers(0)
-    } else if ((cp>20) && (cp>mp)) {
+    } else if (cp>mp) {
+      robot.move (300, 0.0, 0.4, 0.0)
       robot.set_powers(0)
     } else {
-      robot.set_powers(0.4)
-      sleep(1000)
+      robot.move (700, 0.0, -0.4, 0.0)
       robot.set_powers(0)
     }
-    
-    
-    }
-    
-    
-    
+
+
+
+
+
   }
+}
