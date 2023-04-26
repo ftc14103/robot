@@ -115,6 +115,7 @@ class TeleOpAsync: LinearOpMode() {
     drive_thread.start()
 
     while (opModeIsActive()) {
+      telemetry.addData("button", robot.button)
       telemetry.update()
     }
 

@@ -85,13 +85,13 @@ class Robot(val op_mode: LinearOpMode) {
   private var angle: Double = .0
   private var last_angle: Orientation = Orientation()
 
-  /*private var _button: DigitalChannel = op_mode.hardwareMap!!.digitalChannel!!.get("button")
+  private var _button: DigitalChannel = op_mode.hardwareMap!!.digitalChannel!!.get("button")
 
   var button: Boolean
       get() = _button.state
       set(value) {
           _button.state = value
-      }*/
+      }
 
   //region:Config
   companion object {
