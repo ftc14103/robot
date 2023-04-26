@@ -10,8 +10,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 import kotlinx.coroutines.*
 
-@Autonomous(name = "AutoLeft")
-class AutoLeft: LinearOpMode() {
+@Autonomous(name = "oldlefthigh")
+class oldlefthigh: LinearOpMode() {
   override fun runOpMode() {
     var robot = Robot(this)
 
@@ -36,7 +36,7 @@ class AutoLeft: LinearOpMode() {
 
     waitForStart()
 
-    robot.set_take(0.4)
+    robot.set_take(0.46)
     sleep(2000)
     var cp = slrecog.cyaPercent
     var yp = slrecog.yelPercent
@@ -76,7 +76,7 @@ class AutoLeft: LinearOpMode() {
 
       robot.motor_up1.power = 0.4
       robot.motor_up2.power = -0.4
-      sleep(3900)
+      sleep(900)
       robot.motor_up1.power = 0.5
       robot.motor_up2.power = -0.5
       sleep(400)
