@@ -6,10 +6,12 @@ import com.acmerobotics.dashboard.DashboardWebSocket
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.bosch.BNO055IMU
+  import com.qualcomm.hardware.rev.RevTouchSensor
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.DigitalChannel
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
@@ -42,14 +44,6 @@ Servo:
 @Config
 class Robot(val op_mode: LinearOpMode) {
   var hardware: MutableMap<String, Any> = mutableMapOf()
-  var ex: ExecutorService = Executors.newSingleThreadExecutor()
-  
-  var db: FtcDashboard = FtcDashboard.getInstance()
-  var flipFront: Int = 0
-  var flipRear: Int = 255
-  var flipState = true
-  var dm: Telemetry = Telemetry(op_mode)
-  
 
   class InitContext {
     var hardware: MutableMap<String, Any> = mutableMapOf()
@@ -87,18 +81,15 @@ class Robot(val op_mode: LinearOpMode) {
 
   private var _button: DigitalChannel = op_mode.hardwareMap!!.digitalChannel!!.get("button")
 
-  var button: Boolean
-      get() = _button.state
-      set(value) {
-          _button.state = value
-      }
+  val button: Boolean
+    get() = _button.state
 
   //region:Config
   companion object {
     const val DEFAULT_MOTOR_POWER = .5
     const val TICK_PER_REV = 1120
     const val WHEEL_RADIUS = .2
-    const val flipkP = 0.01
+    const val flipkP = 0.05
     const val flipkD = 0.002
     const val showDashmetry = true
   }
@@ -113,9 +104,9 @@ class Robot(val op_mode: LinearOpMode) {
   var motor_up2 = Motor(op_mode.hardwareMap!!.dcMotor!!.get("motor_up2"))
   var liftParam: PIDParameters = PIDParameters(0.01, 0.01, 0.01,
     1.0, 1.0, 5.0, 10.0,
-    { power ->
-      motor_up1.power = power
-      motor_up2.power = -power
+    {
+      motor_up1.power = it
+      motor_up2.power = -it
     },
     {
       motor_up1.currentPosition
@@ -147,7 +138,6 @@ class Robot(val op_mode: LinearOpMode) {
     val params = BNO055IMU.Parameters()
     params.angleUnit = BNO055IMU.AngleUnit.DEGREES
     imu.initialize(params)
-    
   }
 
   fun drive(x: Double, y: Double, r: Double) {
@@ -240,7 +230,7 @@ class Robot(val op_mode: LinearOpMode) {
   fun move(ticks: Int, x: Double = 0.0, y: Double = 0.0, r: Double = 0.0) {
     set_mode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
 
-    var powers = Utils.calc_powers(x, y, r)
+    val powers = Utils.calc_powers(x, y, r)
     set_target_position(ticks, powers)
     set_powers(powers)
     set_mode(DcMotor.RunMode.RUN_TO_POSITION)
@@ -375,7 +365,7 @@ class Robot(val op_mode: LinearOpMode) {
     
   }
   fun flipPID(setValue: Double) {
-    flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+    flip.power = 0.0
     flip.targetPosition = setValue.toInt()
     flip.mode = DcMotor.RunMode.RUN_TO_POSITION
     var tm = Telemetry(op_mode)

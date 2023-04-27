@@ -20,17 +20,21 @@ class TeleOpAsync: LinearOpMode() {
           .addStep(1.0, 1.0, 250)
           .build()
 
+  var y_state = false
   private fun flip_handler(robot: Robot) {
-    if (gamepad2.y) {
+    if (gamepad2.y && !y_state) {
       if (flip_state) {
+        robot.flipPID(-500.0)
         robot.flipPID(-260.0)
-        robot.flipPID(-100.0)
+
+
       } else {
         robot.flipPID(200.0)
       }
-    }
 
-    flip_state = !flip_state
+      flip_state = !flip_state
+    }
+    y_state = gamepad2.y
   }
 
   private fun intake_handler(robot: Robot) {
@@ -85,22 +89,22 @@ class TeleOpAsync: LinearOpMode() {
   @OptIn(DelicateCoroutinesApi::class)
   override fun runOpMode() {
     val robot = Robot(this)
-    var flip_thread = thread(false) {
+    val flip_thread = thread(false) {
       while (opModeIsActive()) {
         flip_handler(robot)
       }
     }
-    var intake_thread = thread(false) {
+    val intake_thread = thread(false) {
       while (opModeIsActive()) {
         intake_handler(robot)
       }
     }
-    var lift_thread = thread(false) {
+    val lift_thread = thread(false) {
       while (opModeIsActive()) {
         lift_handler(robot)
       }
     }
-    var drive_thread = thread(false) {
+    val drive_thread = thread(false) {
       while (opModeIsActive()) {
         drive_handler(robot)
       }
