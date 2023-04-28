@@ -3,33 +3,29 @@ package org.firstinspires.ftc.teamcode.opmodes
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
-import kotlinx.coroutines.*
-import kotlin.concurrent.*
 import org.firstinspires.ftc.teamcode.lib.Robot
+import kotlin.concurrent.thread
 
 @TeleOp(name = "TeleOpActual")
-class TeleOpAsync: LinearOpMode() {
+class TeleOpAsync : LinearOpMode() {
   private var b_state = false
   private var slowmode = false
   private var k = 1.0
-  private var flip_state = false
+  private var flip_state = true
   private var disable_rumble = false
   private var double_ramble: Gamepad.RumbleEffect = Gamepad.RumbleEffect.Builder()
-          .addStep(1.0, 1.0, 250)
-          .addStep(0.0, 0.0, 300)
-          .addStep(1.0, 1.0, 250)
-          .build()
+    .addStep(1.0, 1.0, 250)
+    .addStep(0.0, 0.0, 300)
+    .addStep(1.0, 1.0, 250)
+    .build()
 
-  var y_state = false
+  private var y_state = false
   private fun flip_handler(robot: Robot) {
     if (gamepad2.y && !y_state) {
       if (flip_state) {
-        robot.flipPID(-500.0)
-        robot.flipPID(-260.0)
-
-
+        robot.flipPID(-650.0)
       } else {
-        robot.flipPID(200.0)
+        robot.flipPID(650.0)
       }
 
       flip_state = !flip_state
@@ -39,7 +35,7 @@ class TeleOpAsync: LinearOpMode() {
 
   private fun intake_handler(robot: Robot) {
     if (gamepad2.a) {
-      robot.set_take(0.14)
+      robot.set_take(0.1)
     }
 
     if (gamepad2.x) {
@@ -71,7 +67,7 @@ class TeleOpAsync: LinearOpMode() {
         }
       } else {
         slowmode = true
-        k = 0.5
+        k = 0.6
 
         if (!disable_rumble) {
           gamepad1.rumble(1.0, 1.0, 500)
@@ -80,13 +76,12 @@ class TeleOpAsync: LinearOpMode() {
     }
 
     robot.drive(
-            -k * gamepad1.left_stick_x * 1.1,
-            -k * (-gamepad1.left_stick_y).toDouble(),
-            k * 65 / 100 * (gamepad1.right_trigger - gamepad1.left_trigger),
+      -k * gamepad1.left_stick_x * 1.1,
+      -k * (-gamepad1.left_stick_y).toDouble(),
+      k * 60 / 100 * (gamepad1.right_trigger - gamepad1.left_trigger),
     )
   }
 
-  @OptIn(DelicateCoroutinesApi::class)
   override fun runOpMode() {
     val robot = Robot(this)
     val flip_thread = thread(false) {
@@ -110,7 +105,6 @@ class TeleOpAsync: LinearOpMode() {
       }
     }
 
-
     waitForStart()
 
     flip_thread.start()
@@ -119,10 +113,9 @@ class TeleOpAsync: LinearOpMode() {
     drive_thread.start()
 
     while (opModeIsActive()) {
+      telemetry.addData("flip pos", robot.flip.currentPosition)
       telemetry.addData("button", robot.button)
       telemetry.update()
     }
-
-
   }
 }

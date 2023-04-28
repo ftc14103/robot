@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.lib.recognition
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.opencv.core.Mat
 import org.opencv.objdetect.QRCodeDetector
-import org.openftc.easyopencv.*
+import org.openftc.easyopencv.OpenCvCamera
+import org.openftc.easyopencv.OpenCvCameraFactory
+import org.openftc.easyopencv.OpenCvCameraRotation
+import org.openftc.easyopencv.OpenCvPipeline
 
 class OpenCV(
   val op_mode: OpMode
@@ -43,7 +45,7 @@ class OpenCV(
 
   class Pipeline(
     private val webcam: OpenCvCamera
-  ): OpenCvPipeline() {
+  ) : OpenCvPipeline() {
     var paused = false
     var data: String? = null
 
@@ -72,7 +74,7 @@ class OpenCV(
       paused = !paused
 
       if (paused) {
-         webcam.pauseViewport()
+        webcam.pauseViewport()
       } else {
         webcam.resumeViewport()
       }

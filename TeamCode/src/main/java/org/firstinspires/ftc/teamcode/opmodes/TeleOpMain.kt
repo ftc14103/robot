@@ -13,14 +13,14 @@ import org.firstinspires.ftc.teamcode.lib.Robot
 
 @Config
 @TeleOp(name = "!Main TeleOp")
-class TeleOpMain() : LinearOpMode() {
+class TeleOpMain : LinearOpMode() {
   private var b_state = false
   private var slowmode = false
   private var k = 1.0
   private var distance = 0
   private var flipState = false
   private var lift_uppness = 0.0
-  
+
   @RequiresApi(Build.VERSION_CODES.N)
   override fun runOpMode() {
     var disable_rumble = false
@@ -29,21 +29,21 @@ class TeleOpMain() : LinearOpMode() {
       .addStep(0.0, 0.0, 300)
       .addStep(1.0, 1.0, 250)
       .build()
-    
+
     var robot = Robot(this)
     var lift = LiftIntake(this)
-    
+
     robot.left_rear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     robot.left_front.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     robot.right_front.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     robot.right_rear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     robot.motor_up2.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     robot.motor_up1.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-    
+
     robot.motor_up2.direction = DcMotorSimple.Direction.REVERSE
-    
+
     waitForStart()
-    
+
     while (opModeIsActive()) {
       /**
        * Второй геймпад:
@@ -64,15 +64,15 @@ class TeleOpMain() : LinearOpMode() {
         robot.motor_up1.power = .015
         robot.motor_up2.power = -.015
       }*/
-      
+
       if (gamepad2.a) {// Захват
         robot.set_take(0.12)
       }
-      
+
       if (gamepad2.x) {
         robot.set_take(0.4)
       }
-      
+
       if (gamepad2.y) {
         if (flipState) {
           robot.flipPID(-260.0)
@@ -81,19 +81,19 @@ class TeleOpMain() : LinearOpMode() {
         }
         flipState = flipState.not()
       }
-      
+
       if (gamepad1.dpad_up) {
         lift_uppness += 1.0
-        
+
         robot.liftPID.set(lift_uppness)
       }
-      
+
       if (gamepad1.dpad_down) {
         lift_uppness -= 1.0
-        
+
         robot.liftPID.set(lift_uppness)
       }
-      
+
       if (gamepad1.b && !b_state) {
         if (slowmode) {
           slowmode = false
@@ -110,7 +110,7 @@ class TeleOpMain() : LinearOpMode() {
         }
       }
       b_state = gamepad1.b
-      
+
       robot.drive(
         -k * gamepad1.left_stick_x * 1.1,
         k * (-gamepad1.left_stick_y).toDouble(),
@@ -135,7 +135,7 @@ class TeleOpMain() : LinearOpMode() {
       telemetry.update()
       sleep(5)
     }
-    
+
     lift.disable()
   }
 }

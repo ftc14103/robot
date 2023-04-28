@@ -10,10 +10,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 
 @Autonomous(name = "Auto")
-class auto: LinearOpMode() {
+class auto : LinearOpMode() {
   override fun runOpMode() {
     var robot = Robot(this)
-    
+
     val cam_id = hardwareMap.appContext.resources.getIdentifier(
       "cameraMonitorViewId", "id", hardwareMap.appContext.packageName
     )
@@ -22,23 +22,23 @@ class auto: LinearOpMode() {
     )
     var slrecog = SleeveRecognition()
     camera.setPipeline(slrecog)
-    
-    class Listener: OpenCvCamera.AsyncCameraOpenListener {
+
+    class Listener : OpenCvCamera.AsyncCameraOpenListener {
       override fun onOpened() {
         camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
       }
-      
+
       override fun onError(err: Int) {}
     }
-    
+
     camera.openCameraDeviceAsync(Listener())
-    
+
     waitForStart()
-    
+
     //robot.move(1000, 0.0, 1.0, 0.0)
     //sleep(1000)
-    robot.expand(500, 0.5)
-    
+    robot.flipPID(-700.0)
+
     robot.set_powers(0)
   }
 }

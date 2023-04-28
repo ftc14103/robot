@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.lib.recognition
 
 import android.graphics.Bitmap
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.vuforia.PIXEL_FORMAT
 import com.vuforia.Vuforia
-import org.apache.commons.math3.util.FastMath.pow
 import org.apache.commons.math3.util.FastMath.sqrt
 import org.firstinspires.ftc.robotcore.external.ClassFactory
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
@@ -89,9 +87,9 @@ class ColorRecognition(
     var pixels: IntArray = IntArray(bitmap.width * bitmap.height)
     bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
-   return get_lightest_pixel(
-     get_lightest_pixel_list(pixels)
-   ).pixel;
+    return get_lightest_pixel(
+      get_lightest_pixel_list(pixels)
+    ).pixel
   }
 
   fun get_lightest_pixel_list(pixels: IntArray): HashMap<Int, Pixel> {
@@ -117,9 +115,9 @@ class ColorRecognition(
 
     for (pixel in map) {
       if ((pixel.value.count > lightest.count) &&
-          (pixel.value.light > lightest.light)) {
-            lightest = pixel.value
-          }
+        (pixel.value.light > lightest.light)) {
+        lightest = pixel.value
+      }
     }
 
     return lightest
@@ -131,7 +129,7 @@ class ColorRecognition(
 
     return get_dominant_pixel(
       get_dominant_pixel_list(pixels)
-    ).pixel;
+    ).pixel
   }
 
   private fun get_dominant_pixel_list(pixels: IntArray): Map<Int, Pixel> {

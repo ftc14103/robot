@@ -134,10 +134,5 @@ class lefthighnoenco: LinearOpMode() {
             sleep(1000)
             robot.set_powers(0)
         }
-
-
     }
-
-
-
 }

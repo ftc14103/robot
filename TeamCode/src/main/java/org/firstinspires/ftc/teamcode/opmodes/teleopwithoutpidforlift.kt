@@ -5,12 +5,8 @@ import androidx.annotation.RequiresApi
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Gamepad
-import org.firstinspires.ftc.teamcode.lib.LiftIntake
 import org.firstinspires.ftc.teamcode.lib.Robot
-import kotlin.concurrent.thread
 
 @Config
 @TeleOp(name = "teleopnopid")
@@ -21,7 +17,7 @@ class teleopwithoutpidforlift : LinearOpMode() {
   private var distance = 0
   private var flipState = false
   private var flip_thread = 0
-  
+
   @RequiresApi(Build.VERSION_CODES.N)
   override fun runOpMode() {
     var disable_rumble = false
@@ -30,7 +26,7 @@ class teleopwithoutpidforlift : LinearOpMode() {
       .addStep(0.0, 0.0, 300)
       .addStep(1.0, 1.0, 250)
       .build()
-    
+
     var robot = Robot(this)
     //var lift = LiftIntake(this)
     /*var flip = thread(true) {
@@ -51,18 +47,18 @@ class teleopwithoutpidforlift : LinearOpMode() {
         }
       }
     }*/
-    
+
     //robot.left_rear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     //robot.left_front.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     //robot.right_front.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     //robot.right_rear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     //robot.motor_up2.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     //robot.motor_up1.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-    
+
     //robot.motor_up2.direction = DcMotorSimple.Direction.REVERSE
-    
+
     waitForStart()
-    
+
     while (opModeIsActive()) {
       /**
        * Второй геймпад:
@@ -83,15 +79,15 @@ class teleopwithoutpidforlift : LinearOpMode() {
         robot.motor_up1.power = .015
         robot.motor_up2.power = -.015
       }
-      
+
       if (gamepad2.a) {
         robot.set_take(0.14)
       }
-      
+
       if (gamepad2.x) {//захват
         robot.set_take(0.46)
       }
-      
+
       if (gamepad2.y) {
         if (flipState) {
           robot.flipPID(-430.0)
@@ -103,7 +99,7 @@ class teleopwithoutpidforlift : LinearOpMode() {
         }
         flipState = !flipState
       }
-      
+
       /*if (gamepad1.dpad_up && lift.is_stable()) {
         var a = lift.get_target()
         lift.set_level_number(lift.get_level_number() - 5.5)
@@ -121,7 +117,7 @@ class teleopwithoutpidforlift : LinearOpMode() {
         }
         sleep(100)
       }*/
-      
+
       if (gamepad1.b && !b_state) {
         if (slowmode) {
           slowmode = false
@@ -138,13 +134,13 @@ class teleopwithoutpidforlift : LinearOpMode() {
         }
       }
       b_state = gamepad1.b
-      
+
       robot.drive(
         -k * gamepad1.left_stick_x * 1.1,
         -k * (gamepad1.left_stick_y).toDouble(),
         k * 65 / 100 * (gamepad1.right_trigger - gamepad1.left_trigger),
       )
-      
+
       /*telemetry.addData("lift target", lift.get_target())
       telemetry.addData("lift err", lift.get_avg_err())
       telemetry.addData("lift level", lift.get_level_number())
@@ -157,7 +153,7 @@ class teleopwithoutpidforlift : LinearOpMode() {
       telemetry.update()
       sleep(5)
     }
-    
+
     //lift.disable()
   }
 }

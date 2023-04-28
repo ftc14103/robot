@@ -2,17 +2,13 @@ package org.firstinspires.ftc.teamcode.lib
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.acmerobotics.dashboard.DashboardWebSocket
-import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.bosch.BNO055IMU
-  import com.qualcomm.hardware.rev.RevTouchSensor
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.DigitalChannel
-import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
@@ -22,10 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.lib.hardware.Motor
 import org.firstinspires.ftc.teamcode.lib.hardware.Servo
 import org.firstinspires.ftc.teamcode.lib.utils.Utils
-import org.firstinspires.ftc.teamcode.util.DashboardUtil
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import kotlin.math.*
+
 /*
 Control Hub:
   Motors:
@@ -71,7 +65,10 @@ class Robot(val op_mode: LinearOpMode) {
       if (value in 0.0..1.0) servo_take.position = value
     }
 
-  fun set_take(v: Double) { servo_take.position = v }
+  fun set_take(v: Double) {
+    servo_take.position = v
+  }
+
   fun get_take() = servo_take.position
 
   var imu: BNO055IMU
@@ -93,13 +90,13 @@ class Robot(val op_mode: LinearOpMode) {
     const val flipkD = 0.002
     const val showDashmetry = true
   }
-  
+
   //endregion
   var right_front = Motor(op_mode.hardwareMap!!.dcMotor!!.get("right_front"))
   var right_rear = Motor(op_mode.hardwareMap!!.dcMotor!!.get("right_rear"))
   var left_front = Motor(op_mode.hardwareMap!!.dcMotor!!.get("left_front"))
   var left_rear = Motor(op_mode.hardwareMap!!.dcMotor!!.get("left_rear"))
-  
+
   var motor_up1 = Motor(op_mode.hardwareMap!!.dcMotor!!.get("motor_up1"))
   var motor_up2 = Motor(op_mode.hardwareMap!!.dcMotor!!.get("motor_up2"))
   var liftParam: PIDParameters = PIDParameters(0.01, 0.01, 0.01,
@@ -115,18 +112,19 @@ class Robot(val op_mode: LinearOpMode) {
       motor_up1.velocity
     }, true)
   var liftPID: PIDRegulator = PIDRegulator(liftParam, op_mode)
-  
+
   var servo_take = Servo(op_mode.hardwareMap!!.servo!!.get("servo_take"))
-  
-  var flip =  Motor(op_mode.hardwareMap!!.dcMotor!!.get("flip"))
+
+  var flip = Motor(op_mode.hardwareMap!!.dcMotor!!.get("flip"))
+
   @RequiresApi(Build.VERSION_CODES.N)
   var flipParam: PIDParameters = PIDParameters(0.01, 0.01, 0.01,
     1.0, 1.0, 5.0, 10.0,
-    { flip.power }, {flip.currentPosition},
-    {flip.velocity}, true)
+    { flip.power }, { flip.currentPosition },
+    { flip.velocity }, true)
+
   @RequiresApi(Build.VERSION_CODES.N)
   var flipPID: PIDRegulator = PIDRegulator(flipParam, op_mode)
-  
 
 
   init {
@@ -158,10 +156,10 @@ class Robot(val op_mode: LinearOpMode) {
   }
 
   fun set_mode(mode: DcMotor.RunMode) {
-    left_front.mode  = mode
-    left_rear.mode   = mode
+    left_front.mode = mode
+    left_rear.mode = mode
     right_front.mode = mode
-    right_rear.mode  = mode
+    right_rear.mode = mode
   }
 
   fun is_busy(): Boolean {
@@ -170,8 +168,8 @@ class Robot(val op_mode: LinearOpMode) {
       right_front.isBusy &&
       right_rear.isBusy
 
-    val pows = (abs(left_front.power)  +
-      abs(left_rear.power)   +
+    val pows = (abs(left_front.power) +
+      abs(left_rear.power) +
       abs(right_front.power) +
       abs(right_rear.power)) > .05
 
@@ -235,7 +233,8 @@ class Robot(val op_mode: LinearOpMode) {
     set_powers(powers)
     set_mode(DcMotor.RunMode.RUN_TO_POSITION)
 
-    while (is_busy() && op_mode.opModeIsActive()) {}
+    while (is_busy() && op_mode.opModeIsActive()) {
+    }
 
     set_powers(0)
 
@@ -250,7 +249,8 @@ class Robot(val op_mode: LinearOpMode) {
     set_powers(doubleArrayOf(-power, -power, power, power))
     set_mode(DcMotor.RunMode.RUN_TO_POSITION)
 
-    while (is_busy() && op_mode.opModeIsActive()) {}
+    while (is_busy() && op_mode.opModeIsActive()) {
+    }
 
     set_powers(0.0)
     set_mode(DcMotor.RunMode.RUN_USING_ENCODER)
@@ -264,11 +264,13 @@ class Robot(val op_mode: LinearOpMode) {
     set_powers(doubleArrayOf(power, power, power, power))
     set_mode(DcMotor.RunMode.RUN_TO_POSITION)
 
-    while (is_busy() && op_mode.opModeIsActive()) {}
+    while (is_busy() && op_mode.opModeIsActive()) {
+    }
 
     set_powers(0.0)
     set_mode(DcMotor.RunMode.RUN_USING_ENCODER)
   }
+
   // max = 5300 tick
   // 5500
   // 4200
@@ -293,7 +295,8 @@ class Robot(val op_mode: LinearOpMode) {
     motor_up2.mode = DcMotor.RunMode.RUN_TO_POSITION
 
     while (motor_up1.isBusy && motor_up1.power > .05 &&
-           motor_up2.isBusy && motor_up2.power > .05 && op_mode.opModeIsActive()) {}
+      motor_up2.isBusy && motor_up2.power > .05 && op_mode.opModeIsActive()) {
+    }
 
     motor_up1.power = 0.0
     motor_up2.power = 0.0
@@ -301,7 +304,8 @@ class Robot(val op_mode: LinearOpMode) {
     motor_up1.mode = DcMotor.RunMode.RUN_USING_ENCODER
     motor_up2.mode = DcMotor.RunMode.RUN_USING_ENCODER
   }
-  fun expand(power:Number){
+
+  fun expand(power: Number) {
     motor_up1.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
     motor_up2.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
     motor_up1.power = power.toDouble()
@@ -347,25 +351,30 @@ class Robot(val op_mode: LinearOpMode) {
 
     reset_angle()
   }
-  fun flipFront(power:Double){
+
+  fun flipFront(power: Double) {
     flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
     flip.targetPosition = -260
     flip.mode = DcMotor.RunMode.RUN_TO_POSITION
     flip.power = -power
-    while (op_mode.opModeIsActive() && (flip.currentPosition >= flip.targetPosition)){}
+    while (op_mode.opModeIsActive() && (flip.currentPosition >= flip.targetPosition)) {
+    }
     flip.power = 0.0
   }
-  fun flipRear(power: Double){
+
+  fun flipRear(power: Double) {
     flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
     flip.targetPosition = 260
     flip.mode = DcMotor.RunMode.RUN_TO_POSITION
     flip.power = -power
-    while (op_mode.opModeIsActive() && (flip.currentPosition <= flip.targetPosition)){}
+    while (op_mode.opModeIsActive() && (flip.currentPosition <= flip.targetPosition)) {
+    }
     flip.power = 0.0
-    
+
   }
+
   fun flipPID(setValue: Double) {
-    flip.power = 0.0
+    flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
     flip.targetPosition = setValue.toInt()
     flip.mode = DcMotor.RunMode.RUN_TO_POSITION
     var tm = Telemetry(op_mode)
@@ -407,30 +416,30 @@ class Robot(val op_mode: LinearOpMode) {
     }
     flip.power = 0.0
     setTime.reset()
-    }
-  
-    class flipFrontAutomate(): Runnable{
-      override fun run() {
-        var flip =  Motor(hardwareMap!!.dcMotor!!.get("flip"))
-        flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        flip.targetPosition = 260
-        flip.mode = DcMotor.RunMode.RUN_TO_POSITION
-        var d0 = 260 - flip.currentPosition
-        var d1: Double
-        val calcTime = ElapsedTime()
-        val setTime = ElapsedTime()
-        var dDerivative: Double
-        var u: Double
-        setTime.reset()
-        calcTime.reset()
-        while ( setTime.seconds() < 3 && (abs(d0) > 1 || abs(flip.velocity) > 0.2)) {
-          d1 = (260 - flip.currentPosition).toDouble()
-          dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
-          u = flipkP * d1 + flipkD * dDerivative
-          flip.power = u
-          d0 = 260 - flip.currentPosition
-        }
-        flip.power = 0.0
+  }
+
+  class flipFrontAutomate : Runnable {
+    override fun run() {
+      var flip = Motor(hardwareMap!!.dcMotor!!.get("flip"))
+      flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+      flip.targetPosition = 260
+      flip.mode = DcMotor.RunMode.RUN_TO_POSITION
+      var d0 = 260 - flip.currentPosition
+      var d1: Double
+      val calcTime = ElapsedTime()
+      val setTime = ElapsedTime()
+      var dDerivative: Double
+      var u: Double
+      setTime.reset()
+      calcTime.reset()
+      while (setTime.seconds() < 3 && (abs(d0) > 1 || abs(flip.velocity) > 0.2)) {
+        d1 = (260 - flip.currentPosition).toDouble()
+        dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
+        u = flipkP * d1 + flipkD * dDerivative
+        flip.power = u
+        d0 = 260 - flip.currentPosition
       }
+      flip.power = 0.0
+    }
   }
 }

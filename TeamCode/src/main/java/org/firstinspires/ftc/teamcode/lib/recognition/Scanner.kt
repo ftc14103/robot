@@ -1,26 +1,16 @@
 package org.firstinspires.ftc.teamcode.lib.recognition
 
 import android.graphics.Bitmap
-import com.google.android.gms.tasks.RuntimeExecutionException
 import com.google.android.gms.tasks.Task
-import com.google.android.odml.image.BitmapMlImageBuilder
-import com.google.android.odml.image.MlImage
-import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import com.google.zxing.aztec.AztecReader
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
-import com.qualcomm.robotcore.hardware.HardwareMap
-import com.vuforia.Image
 import com.vuforia.PIXEL_FORMAT
 import com.vuforia.Vuforia
 import org.firstinspires.ftc.robotcore.external.ClassFactory
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer
-import java.util.concurrent.BlockingQueue
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions as BarcodeScannerOptions
 
 class Scanner(
   op_mode: OpMode
@@ -69,9 +59,9 @@ class Scanner(
         client.process(
           InputImage.fromBitmap(img, 0)
         )
-          .addOnFailureListener  { }
+          .addOnFailureListener { }
           .addOnCompleteListener { client.close() }
-      } catch(e: Throwable) {
+      } catch (e: Throwable) {
         null
       }
     }

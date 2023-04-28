@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import kotlin.math.abs
 
-class PIDRegulator(private val parameters: PIDParameters, private val opMode:LinearOpMode) {
-  private var tm: Telemetry  = opMode.telemetry
-  
+class PIDRegulator(private val parameters: PIDParameters, private val opMode: LinearOpMode) {
+  private var tm: Telemetry = opMode.telemetry
+
   @RequiresApi(api = Build.VERSION_CODES.N)
     /**
      * Класс PID-регулятора
@@ -36,7 +36,7 @@ class PIDRegulator(private val parameters: PIDParameters, private val opMode:Lin
     setTime.reset()
     calcTime.reset()
     while (opMode.opModeIsActive() && setTime.seconds() < parameters.maxSettingTime &&
-        (abs(d0) > parameters.valueTolerance ||
+      (abs(d0) > parameters.valueTolerance ||
         abs(parameters.velocityValue!!.get().toDouble()) > parameters.velocityTolerance)) {
       d1 = setValue - parameters.actualValue!!.get().toDouble()
       dDerivative = (d1 - d0) / (calcTime.nanoseconds() * 10e-9)
@@ -70,5 +70,5 @@ class PIDRegulator(private val parameters: PIDParameters, private val opMode:Lin
     parameters.setControlAction.accept(0.0)
     setTime.reset()
   }
-  
+
 }

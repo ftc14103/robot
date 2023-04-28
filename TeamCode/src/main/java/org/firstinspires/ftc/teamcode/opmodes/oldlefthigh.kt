@@ -2,16 +2,17 @@ package org.firstinspires.ftc.teamcode.opmodes
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.lib.Robot
 import org.firstinspires.ftc.teamcode.lib.recognition.SleeveRecognition
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
-import kotlinx.coroutines.*
 
 @Autonomous(name = "oldlefthigh")
-class oldlefthigh: LinearOpMode() {
+class oldlefthigh : LinearOpMode() {
   override fun runOpMode() {
     var robot = Robot(this)
 
@@ -24,7 +25,7 @@ class oldlefthigh: LinearOpMode() {
     var slrecog = SleeveRecognition()
     camera.setPipeline(slrecog)
 
-    class Listener: OpenCvCamera.AsyncCameraOpenListener {
+    class Listener : OpenCvCamera.AsyncCameraOpenListener {
       override fun onOpened() {
         camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
       }
@@ -45,8 +46,8 @@ class oldlefthigh: LinearOpMode() {
     telemetry.addData("cp", cp)
     telemetry.addData("yp", yp)
     telemetry.addData("mp", mp)
-    telemetry.addData("2 zone", (cp>mp) && (cp>yp))
-    telemetry.addData("3 zone", (mp>cp) && (mp>yp))
+    telemetry.addData("2 zone", (cp > mp) && (cp > yp))
+    telemetry.addData("3 zone", (mp > cp) && (mp > yp))
     telemetry.update()
     var up1_encoder = robot.motor_up1.currentPosition
     var up2_encoder = robot.motor_up2.currentPosition
