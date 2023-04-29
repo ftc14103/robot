@@ -51,7 +51,6 @@ class right2 : LinearOpMode() {
     telemetry.addData("enc1", robot.motor_up2.currentPosition)
     telemetry.update()
 
-
     robot.motor_up1.power = 0.5
     robot.motor_up2.power = -0.5
     robot.move(2150, 0.0, 0.4, 0.0)

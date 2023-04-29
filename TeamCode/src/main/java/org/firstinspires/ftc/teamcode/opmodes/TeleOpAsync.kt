@@ -23,9 +23,9 @@ class TeleOpAsync : LinearOpMode() {
   private fun flip_handler(robot: Robot) {
     if (gamepad2.y && !y_state) {
       if (flip_state) {
-        robot.flipPID(-650.0)
+        robot.flipPID(-550.0)
       } else {
-        robot.flipPID(650.0)
+        robot.flipPID(550.0)
       }
 
       flip_state = !flip_state
