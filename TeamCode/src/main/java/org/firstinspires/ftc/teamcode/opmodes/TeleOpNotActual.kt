@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.lib.Robot
 import kotlin.concurrent.thread
 
 @TeleOp(name = "TeleOpActual")
-class TeleOpAsync : LinearOpMode() {
+class TeleOpNotActual : LinearOpMode() {
   private var b_state = false
   private var slowmode = false
   private var k = 1.0
@@ -20,12 +20,12 @@ class TeleOpAsync : LinearOpMode() {
     .build()
 
   private var y_state = false
-  private fun flip_handler(robot: Robot) {
+  private fun flipper(robot: Robot) {
     if (gamepad2.y && !y_state) {
       if (flip_state) {
-        robot.flipPID(-550.0)
+        robot.flipPID(-600.0)
       } else {
-        robot.flipPID(550.0)
+        robot.flipPID(650.0)
       }
 
       flip_state = !flip_state
@@ -84,9 +84,9 @@ class TeleOpAsync : LinearOpMode() {
 
   override fun runOpMode() {
     val robot = Robot(this)
-    val flip_thread = thread(false) {
+    val flipper_thread = thread(false) {
       while (opModeIsActive()) {
-        flip_handler(robot)
+        flipper(robot)
       }
     }
     val intake_thread = thread(false) {
@@ -107,7 +107,7 @@ class TeleOpAsync : LinearOpMode() {
 
     waitForStart()
 
-    flip_thread.start()
+    flipper_thread.start()
     intake_thread.start()
     lift_thread.start()
     drive_thread.start()

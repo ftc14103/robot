@@ -86,7 +86,7 @@ class Robot(val op_mode: LinearOpMode) {
     const val DEFAULT_MOTOR_POWER = .5
     const val TICK_PER_REV = 1120
     const val WHEEL_RADIUS = .2
-    const val flipkP = 0.05
+    const val flipkP = 0.001
     const val flipkD = 0.002
     const val showDashmetry = true
   }
@@ -374,6 +374,7 @@ class Robot(val op_mode: LinearOpMode) {
   }
 
   fun flipPID(setValue: Double) {
+    op_mode.telemetry.log().add("flipPID value $setValue")
     flip.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
     flip.targetPosition = setValue.toInt()
     flip.mode = DcMotor.RunMode.RUN_TO_POSITION
